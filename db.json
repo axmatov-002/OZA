@@ -1,0 +1,534 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Jasur Aliyev",
+      "email": "admin@upgrade.uz",
+      "password": "admin123",
+      "role": "admin",
+      "phone": "+998 90 123 45 67",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "status": "Faol",
+      "createdAt": "2026-01-10"
+    },
+    {
+      "id": "u2",
+      "name": "Sardor Rustamov",
+      "email": "manager@upgrade.uz",
+      "password": "manager123",
+      "role": "manager",
+      "phone": "+998 93 987 65 43",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+      "status": "Faol",
+      "createdAt": "2026-02-15"
+    },
+    {
+      "id": "u3",
+      "name": "Dilshod Karimov",
+      "email": "user@upgrade.uz",
+      "password": "user123",
+      "role": "user",
+      "phone": "+998 99 555 12 34",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+      "status": "Faol",
+      "createdAt": "2026-03-01"
+    }
+  ],
+  "products": [
+    {
+      "id": "p1",
+      "name": "UPGRADE CyberBlade Pro RGB Wireless Klaviatura",
+      "category": "Klaviaturalar",
+      "badge": "TOP XARID",
+      "price": "890 000 so'm",
+      "oldPrice": "1 050 000 so'm",
+      "priceNum": 890000,
+      "stock": 18,
+      "rating": 4.9,
+      "reviewsCount": 128,
+      "image": "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Gateron Red Switch (Hot-Swap)",
+        "2.4G / Bluetooth / Type-C",
+        "PBT Double-Shot tugmalar",
+        "16.8 mln RGB yoritish"
+      ],
+      "description": "Geymerlar va dasturchilar uchun maxsus yaratilgan ultra-sezgir mexanik klaviatura."
+    },
+    {
+      "id": "p2",
+      "name": "UPGRADE Phantom V3 Ultralight Sichqoncha",
+      "category": "Sichqonchalar",
+      "badge": "YANGI",
+      "price": "450 000 so'm",
+      "oldPrice": "580 000 so'm",
+      "priceNum": 450000,
+      "stock": 25,
+      "rating": 5.0,
+      "reviewsCount": 94,
+      "image": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "49 gramm super yengil korpus",
+        "PixArt PAW3395 26000 DPI",
+        "100% Sof PTFE silliq oyoqlar",
+        "80 mln bosish resursi"
+      ],
+      "description": "Mukammal yengillik va piksellar darajasidagi aniqlik. Kiber sport musobaqalari uchun."
+    },
+    {
+      "id": "p3",
+      "name": "UPGRADE SoundPulse 7.1 Surround Gaming Headset",
+      "category": "Naushniklar",
+      "badge": "-20% CHEGIRMA",
+      "price": "620 000 so'm",
+      "oldPrice": "780 000 so'm",
+      "priceNum": 620000,
+      "stock": 12,
+      "rating": 4.8,
+      "reviewsCount": 82,
+      "image": "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "53mm neodim kuchli drayverlar",
+        "7.1 fazoviy surround audio",
+        "Shovqinni to'suvchi mikrofon",
+        "Yumshoq xotirali eko-charm"
+      ],
+      "description": "O'yindagi dushman qadamlarini va tovush yo'nalishini 360 darajada aniq eshiting."
+    },
+    {
+      "id": "p4",
+      "name": "UPGRADE TitanGlide XXL RGB Gaming Gilamcha",
+      "category": "RGB Gilamchalar",
+      "badge": "OMMABOP",
+      "price": "240 000 so'm",
+      "oldPrice": "310 000 so'm",
+      "priceNum": 240000,
+      "stock": 40,
+      "rating": 4.9,
+      "reviewsCount": 215,
+      "image": "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "900 x 400 x 4 mm o'lcham",
+        "Suv o'tkazmaydigan nano-mato",
+        "14 xil dinamik RGB rejimlar",
+        "Sirpanmaydigan rezina taglik"
+      ],
+      "description": "Butun stolni qamrab oluvchi ulkan gilamcha. Sichqoncha harakati silliq va oson."
+    },
+    {
+      "id": "p5",
+      "name": "UPGRADE StreamCast Studio Kondensator Mikrofon",
+      "category": "Strim & Audio",
+      "badge": "PRO SERIYA",
+      "price": "540 000 so'm",
+      "oldPrice": "690 000 so'm",
+      "priceNum": 540000,
+      "stock": 9,
+      "rating": 4.9,
+      "reviewsCount": 76,
+      "image": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "192kHz / 24bit studiya sifati",
+        "Sensorli bir bosishda Mute",
+        "Kardioid yo'naltirilgan audio",
+        "Shok-podveska va pop-filtr"
+      ],
+      "description": "Podkastlar, strimlar va onlayn muloqotlar uchun kristaldek tiniq ovoz yozish imkoniyati."
+    },
+    {
+      "id": "p6",
+      "name": "UPGRADE ErgoLift Alyuminiy Monitor Qavsi",
+      "category": "Stol & Qavslar",
+      "badge": "ERGONOMIK",
+      "price": "480 000 so'm",
+      "oldPrice": "600 000 so'm",
+      "priceNum": 480000,
+      "stock": 15,
+      "rating": 4.8,
+      "reviewsCount": 63,
+      "image": "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "17\" dan 35\" gacha monitorlar",
+        "Gidravlik gaz-lift mexanizm",
+        "360° to'liq burilish va egilish",
+        "Kabellarni yashirish kanali"
+      ],
+      "description": "Ish stolingizda maksimal erkin joy oching va bo'yningizdagi charchoqni yo'qoting."
+    },
+    {
+      "id": "p7",
+      "name": "UPGRADE Apex 75% Gasket-Mount Custom Mexanik Klaviatura",
+      "category": "Klaviaturalar",
+      "badge": "PREMIUM",
+      "price": "1 150 000 so'm",
+      "oldPrice": "1 380 000 so'm",
+      "priceNum": 1150000,
+      "stock": 14,
+      "rating": 5.0,
+      "reviewsCount": 67,
+      "image": "https://images.unsplash.com/photo-1561112078-7d24e04c3407?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Gasket-Mount shovqinsiz qatlam",
+        "KTT Strawberry Switch (Moylab berilgan)",
+        "OLED mini-ekran va ovoz sozlagich Knob",
+        "Triple Mode: 2.4Ghz, Bluetooth 5.2, Type-C"
+      ],
+      "description": "Yozish jarayonida eng yoqimli 'thock' ovozi va qulaylik beruvchi professional custom klaviatura."
+    },
+    {
+      "id": "p8",
+      "name": "UPGRADE ZeroLag TKL RGB Optik-Mexanik Klaviatura",
+      "category": "Klaviaturalar",
+      "badge": "KIBERSPORT",
+      "price": "790 000 so'm",
+      "oldPrice": "920 000 so'm",
+      "priceNum": 790000,
+      "stock": 20,
+      "rating": 4.8,
+      "reviewsCount": 89,
+      "image": "https://images.unsplash.com/photo-1541140532154-b024d705b90a?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "0.2ms ultra-tez optik reaksiyali switchlar",
+        "Aviatsion alyuminiy korpus",
+        "Har bir tugma uchun individual RGB",
+        "TKL 87 tugmali ixcham format"
+      ],
+      "description": "Kiber sportchilar uchun har bir millisekund ahamiyatga ega bo'lgan turnirlar uchun maxsus ishlab chiqilgan."
+    },
+    {
+      "id": "p9",
+      "name": "UPGRADE ViperX Ergonomik Simsiz Geyming Sichqoncha",
+      "category": "Sichqonchalar",
+      "badge": "YANGI",
+      "price": "580 000 so'm",
+      "oldPrice": "690 000 so'm",
+      "priceNum": 580000,
+      "stock": 16,
+      "rating": 4.9,
+      "reviewsCount": 42,
+      "image": "https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Ergonomik qo'lni charchatmaydigan shakl",
+        "PixArt PAW3395 26000 DPI sensor",
+        "100 soatgacha uzluksiz batareya quvvati",
+        "Magnitli tezkor zaryadlash dok-stansiyasi"
+      ],
+      "description": "Uzoq davom etadigan o'yinlar va ish seanslarida kaftni toliqishdan himoya qiluvchi ergonomik mo'jiza."
+    },
+    {
+      "id": "p10",
+      "name": "UPGRADE AeroGrip Honeycomb RGB Superlight Sichqoncha",
+      "category": "Sichqonchalar",
+      "badge": "CHEGIRMA",
+      "price": "360 000 so'm",
+      "oldPrice": "470 000 so'm",
+      "priceNum": 360000,
+      "stock": 30,
+      "rating": 4.7,
+      "reviewsCount": 110,
+      "image": "https://images.unsplash.com/photo-1563297007-0686b7003af7?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "58 gramm chuqurchali nafas oluvchi korpus",
+        "Paracord yumshoq egiluvchan sim",
+        "16000 DPI optik sensor",
+        "6 ta dasturlanadigan makros tugmasi"
+      ],
+      "description": "Tezkor burilishlar va aniq nishonga olish uchun patdek yengil geymerlar tanlovi."
+    },
+    {
+      "id": "p11",
+      "name": "UPGRADE NovaPro Wireless ANC Gibrid Gaming Naushnik",
+      "category": "Naushniklar",
+      "badge": "TOP SIFAT",
+      "price": "1 290 000 so'm",
+      "oldPrice": "1 550 000 so'm",
+      "priceNum": 1290000,
+      "stock": 8,
+      "rating": 5.0,
+      "reviewsCount": 54,
+      "image": "https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Faol shovqinni bekor qilish (ANC)",
+        "Yuqori aniqlikdagi Hi-Res Audio sertifikati",
+        "Simsiz 2.4Ghz + Bluetooth multipoint",
+        "50 soatgacha bir quvvatlanishda ishlash"
+      ],
+      "description": "Tashqi dunyo shovqinini butunlay o'chirib, o'yin va musiqa atmosferasiga chuqur sho'ng'ing."
+    },
+    {
+      "id": "p12",
+      "name": "UPGRADE AirBass Gaming TWS Simsiz Quloqchinlar",
+      "category": "Naushniklar",
+      "badge": "IXCHAM",
+      "price": "390 000 so'm",
+      "oldPrice": "490 000 so'm",
+      "priceNum": 390000,
+      "stock": 22,
+      "rating": 4.8,
+      "reviewsCount": 98,
+      "image": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "40ms ultra-past kechikishli O'yin Rejimi",
+        "Kuchli 12mm titan kompozit bass drayveri",
+        "Kiber-uslubdagi RGB keys yoritgichi",
+        "IPX5 ter va suv chayqalishidan himoya"
+      ],
+      "description": "Telefon, noutbuk va planshetda o'yin o'ynash uchun qulay va baquvvat bassli quloqchinlar."
+    },
+    {
+      "id": "p13",
+      "name": "UPGRADE SpeedMatrix Kordura Suvga Chidamli Gilamcha",
+      "category": "RGB Gilamchalar",
+      "badge": "BARMURD",
+      "price": "195 000 so'm",
+      "oldPrice": "260 000 so'm",
+      "priceNum": 195000,
+      "stock": 35,
+      "rating": 4.9,
+      "reviewsCount": 140,
+      "image": "https://images.unsplash.com/photo-1616499370260-485b3e5ed6ca?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Asl harbiy sifatdagi CORDURA matosi",
+        "800 x 300 x 3 mm keng o'lcham",
+        "Tashqi suyuqlik va changni qaytaruvchi qatlam",
+        "Qalin chetki tikuvlar chidamlilik kafolati"
+      ],
+      "description": "Yillar davomida eskirish va ishqalanishdan qo'rqmaydigan mustahkam yuza."
+    },
+    {
+      "id": "p14",
+      "name": "UPGRADE CyberGrid Qi Simsiz Quvvatlovchi RGB Gilamcha",
+      "category": "RGB Gilamchalar",
+      "badge": "SMART",
+      "price": "380 000 so'm",
+      "oldPrice": "460 000 so'm",
+      "priceNum": 380000,
+      "stock": 15,
+      "rating": 4.8,
+      "reviewsCount": 49,
+      "image": "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "O'rnatilgan 15W Qi tezkor simsiz zaryadlash",
+        "900 x 400 mm keng qamrovli sirt",
+        "RGB rejimlarini o'zgartirish sensor tugmasi",
+        "Qizib ketishdan ko'p bosqichli xavfsizlik"
+      ],
+      "description": "O'yin paytida telefoningizni gilamchaning maxsus burchagiga qo'ying va simsiz quvvatlang."
+    },
+    {
+      "id": "p15",
+      "name": "UPGRADE VisionPro 4K HDR 60FPS Strim Veb-Kamera",
+      "category": "Strim & Audio",
+      "badge": "PRO STRIM",
+      "price": "890 000 so'm",
+      "oldPrice": "1 100 000 so'm",
+      "priceNum": 890000,
+      "stock": 11,
+      "rating": 4.9,
+      "reviewsCount": 38,
+      "image": "https://images.unsplash.com/photo-1593152167544-085d3b9c4938?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Sony STARVIS 4K Ultra-HD sensor",
+        "Sun'iy intellektli avtofokus va yuzni kuzatish",
+        "Stereo shovqin filtrli qo'sh mikrofon",
+        "Maxfiylik pardasi (Privacy Shutter)"
+      ],
+      "description": "YouTube, Twitch strimlari va Zoom konferensiyalarida professional studiya darajasidagi tasvir."
+    },
+    {
+      "id": "p16",
+      "name": "UPGRADE StreamDeck Master 15-Tugmali LCD Panel",
+      "category": "Strim & Audio",
+      "badge": "STRIMERLARGA",
+      "price": "1 450 000 so'm",
+      "oldPrice": "1 750 000 so'm",
+      "priceNum": 1450000,
+      "stock": 7,
+      "rating": 5.0,
+      "reviewsCount": 29,
+      "image": "https://images.unsplash.com/photo-1616499370260-485b3e5ed6ca?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "15 ta to'liq moslashtiriladigan LCD displey tugma",
+        "OBS, Discord, Spotify va o'yinlar integratsiyasi",
+        "Bitta tugma bilan murakkab makroslarni ishga tushirish",
+        "Sozlanuvchi metall stend podstavkasi"
+      ],
+      "description": "Striming, dasturlash va video montaj jarayonlarini bir necha barobar tezlashtiruvchi pult."
+    },
+    {
+      "id": "p17",
+      "name": "UPGRADE DualArm Professional 2-Monitorli Qavs",
+      "category": "Stol & Qavslar",
+      "badge": "DOPPEL PRO",
+      "price": "790 000 so'm",
+      "oldPrice": "950 000 so'm",
+      "priceNum": 790000,
+      "stock": 10,
+      "rating": 4.9,
+      "reviewsCount": 51,
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "2 ta 32 dyuymgacha bo'lgan monitorni ushlaydi",
+        "Mustaqil harakatlanuvchi ikkita gaz-lift yelka",
+        "Har bir monitor uchun 9 kg yuk ko'tarish quvvati",
+        "VESA 75x75 va 100x100 standartlariga mos"
+      ],
+      "description": "Dasturchilar va treyderlar uchun ikkita monitorni qulay burchakda havoda erkin boshqarish imkoniyati."
+    },
+    {
+      "id": "p18",
+      "name": "UPGRADE Vertex RGB Naushnik Stendi (USB 3.0 Hub bilan)",
+      "category": "Stol & Qavslar",
+      "badge": "Foydali",
+      "price": "270 000 so'm",
+      "oldPrice": "350 000 so'm",
+      "priceNum": 270000,
+      "stock": 25,
+      "rating": 4.8,
+      "reviewsCount": 73,
+      "image": "https://images.unsplash.com/photo-1612444557-8519d9e6e1a7?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "3 ta tezkor USB 3.0 porti va 3.5mm AUX kirish",
+        "8 xil RGB yorug'lik effektlari",
+        "Og'irlashtirilgan sirpanmas metall asos",
+        "Kabelni tartibga soluvchi ushlagich"
+      ],
+      "description": "Qimmatbaho naushnikingizni xavfsiz saqlang va fleshka hamda sichqonchani to'g'ridan-to'g'ri stendga ulang."
+    },
+    {
+      "id": "p19",
+      "name": "UPGRADE Lumina Ultra-Wide Monitor Bar Chirog'i",
+      "category": "Stol & Qavslar",
+      "badge": "KO'ZGA FOYDA",
+      "price": "340 000 so'm",
+      "oldPrice": "420 000 so'm",
+      "priceNum": 340000,
+      "stock": 28,
+      "rating": 4.9,
+      "reviewsCount": 115,
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Asimmetrik yorug'lik (Ekranga yaltiramaydi)",
+        "Haroratni 2700K dan 6500K gacha sozlash",
+        "Sensorli quvvat va yorqinlik boshqaruvi",
+        "Type-C orqali monitordan to'g'ridan-to'g'ri quvvatlanish"
+      ],
+      "description": "Kechki ish va o'yinlarda ko'zni asrovchi, stol ustini bir tekis yorituvchi zamonaviy monitor lampasi."
+    },
+    {
+      "id": "p20",
+      "name": "UPGRADE MechCable Aviator Spiral Type-C Kabeli",
+      "category": "Klaviaturalar",
+      "badge": "STIL",
+      "price": "160 000 so'm",
+      "oldPrice": "210 000 so'm",
+      "priceNum": 160000,
+      "stock": 40,
+      "rating": 4.8,
+      "reviewsCount": 84,
+      "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+      "specs": [
+        "Metall aviator (GX16) tezkor ajratuvchi raz'yom",
+        "Ikki qavatli to'qilgan neylon va PET himoya",
+        "Type-C dan USB-A ga oltin qoplangan ulagichlar",
+        "Elastik va shaklini yo'qotmaydigan spiral sim"
+      ],
+      "description": "Mexanik klaviaturangiz va gaming setapingizga o'zgacha zamonaviy estetika bag'ishlovchi sifatli kabel."
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-101",
+      "orderNumber": "UPG-84920",
+      "userId": "u3",
+      "customerName": "Dilshod Karimov",
+      "phone": "+998 99 555 12 34",
+      "address": "Toshkent sh., Yunusobod tumani, 12-mavze, 4-uy",
+      "items": [
+        {
+          "productId": "p1",
+          "name": "UPGRADE CyberBlade Pro RGB Wireless Klaviatura",
+          "priceNum": 890000,
+          "qty": 1
+        }
+      ],
+      "totalAmount": 890000,
+      "status": "Yetkazilmoqda",
+      "paymentMethod": "Payme",
+      "paymentStatus": "To'langan",
+      "date": "2026-09-15 14:30"
+    },
+    {
+      "id": "ord-102",
+      "orderNumber": "UPG-84921",
+      "userId": "u3",
+      "customerName": "Aziz Temirov",
+      "phone": "+998 90 321 00 11",
+      "address": "Toshkent sh., Mirobod tumani, Nukus ko'chasi 21",
+      "items": [
+        {
+          "productId": "p2",
+          "name": "UPGRADE Phantom V3 Ultralight Sichqoncha",
+          "priceNum": 450000,
+          "qty": 1
+        },
+        {
+          "productId": "p4",
+          "name": "UPGRADE TitanGlide XXL RGB Gaming Gilamcha",
+          "priceNum": 240000,
+          "qty": 1
+        }
+      ],
+      "totalAmount": 690000,
+      "status": "Kutilmoqda",
+      "paymentMethod": "Click",
+      "paymentStatus": "Kutilmoqda",
+      "date": "2026-09-16 10:15"
+    },
+    {
+      "id": "ord-103",
+      "orderNumber": "UPG-84918",
+      "userId": "u3",
+      "customerName": "Malika Rahimova",
+      "phone": "+998 97 777 88 99",
+      "address": "Samarqand sh., Registon ko'chasi 45",
+      "items": [
+        {
+          "productId": "p3",
+          "name": "UPGRADE SoundPulse 7.1 Surround Gaming Headset",
+          "priceNum": 620000,
+          "qty": 1
+        }
+      ],
+      "totalAmount": 620000,
+      "status": "Yakunlandi",
+      "paymentMethod": "Uzum Nasiya",
+      "paymentStatus": "To'langan",
+      "date": "2026-09-14 18:20"
+    }
+  ],
+  "categories": [
+    { "id": "c1", "name": "Klaviaturalar", "count": 12 },
+    { "id": "c2", "name": "Sichqonchalar", "count": 16 },
+    { "id": "c3", "name": "Naushniklar", "count": 10 },
+    { "id": "c4", "name": "RGB Gilamchalar", "count": 8 },
+    { "id": "c5", "name": "Stol & Qavslar", "count": 14 },
+    { "id": "c6", "name": "Strim & Audio", "count": 7 }
+  ],
+  "consultations": [
+    {
+      "id": "cs-1",
+      "name": "Akmal Rahimov",
+      "phone": "+998 94 654 32 10",
+      "status": "Yangi",
+      "createdAt": "2026-09-16 11:45"
+    },
+    {
+      "id": "cs-2",
+      "name": "Otabek Qodirov",
+      "phone": "+998 91 123 99 88",
+      "status": "Bog'lanildi",
+      "createdAt": "2026-09-15 16:20"
+    }
+  ]
+}

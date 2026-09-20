@@ -1,0 +1,235 @@
+{
+  "info": {
+    "name": "UPGRADE Accessories API",
+    "_postman_id": "9b12852a-e8d9-482d-8b01-fca584982a31",
+    "description": "UPGRADE Kompyuter Aksessuarlari do'koni uchun REST API kolleksiyasi (Admin, Manager va User modullari bilan). json-server http://localhost:5000 manzilida ishlaydi.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Products (Mahsulotlar)",
+      "item": [
+        {
+          "name": "GET Barcha mahsulotlar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"]
+            }
+          }
+        },
+        {
+          "name": "GET Mahsulot ID bo'yicha",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/p1",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "p1"]
+            }
+          }
+        },
+        {
+          "name": "POST Yangi mahsulot qo'shish (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"UPGRADE Apex Pro Wireless Salla Sichqoncha\",\n  \"category\": \"Sichqonchalar\",\n  \"badge\": \"YANGI\",\n  \"price\": \"520 000 so'm\",\n  \"oldPrice\": \"640 000 so'm\",\n  \"priceNum\": 520000,\n  \"stock\": 30,\n  \"rating\": 5.0,\n  \"reviewsCount\": 12,\n  \"image\": \"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80\",\n  \"specs\": [\"PAW3395 Sensor\", \"4K Dongle\", \"Type-C Fast Charge\"],\n  \"description\": \"Flagman kiber sport sichqonchasi\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"]
+            }
+          }
+        },
+        {
+          "name": "PUT Mahsulotni yangilash (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"UPGRADE CyberBlade Pro RGB Wireless Klaviatura v2\",\n  \"category\": \"Klaviaturalar\",\n  \"badge\": \"TOP XARID\",\n  \"price\": \"920 000 so'm\",\n  \"oldPrice\": \"1 100 000 so'm\",\n  \"priceNum\": 920000,\n  \"stock\": 22,\n  \"rating\": 5.0,\n  \"reviewsCount\": 135,\n  \"image\": \"https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80\",\n  \"specs\": [\"Hot-Swap\", \"Gateron Yellow Switch\", \"PBT Keycaps\"],\n  \"description\": \"Yangilangan mexanik klaviatura\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/p1",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "p1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Mahsulotni o'chirish (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/p6",
+              "host": ["{{baseUrl}}"],
+              "path": ["products", "p6"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Orders (Buyurtmalar - Manager & User)",
+      "item": [
+        {
+          "name": "GET Barcha buyurtmalar (Manager)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "POST Yangi buyurtma berish (User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderNumber\": \"UPG-99001\",\n  \"userId\": \"u3\",\n  \"customerName\": \"Dilshod Karimov\",\n  \"phone\": \"+998 99 555 12 34\",\n  \"address\": \"Toshkent sh., Chilonzor 9, 21-uy\",\n  \"items\": [\n    {\n      \"productId\": \"p2\",\n      \"name\": \"UPGRADE Phantom V3 Ultralight Sichqoncha\",\n      \"priceNum\": 450000,\n      \"qty\": 1\n    }\n  ],\n  \"totalAmount\": 450000,\n  \"status\": \"Kutilmoqda\",\n  \"paymentMethod\": \"Payme\",\n  \"paymentStatus\": \"To'langan\",\n  \"date\": \"2026-09-16 15:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Buyurtma statusini o'zgartirish (Manager)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Yetkazilmoqda\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/ord-102",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ord-102"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Users (Foydalanuvchilar - Admin)",
+      "item": [
+        {
+          "name": "GET Barcha foydalanuvchilar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "POST Yangi menejer qo'shish (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anvar Qosimov\",\n  \"email\": \"anvar.m@upgrade.uz\",\n  \"role\": \"manager\",\n  \"phone\": \"+998 90 777 66 55\",\n  \"status\": \"Faol\",\n  \"createdAt\": \"2026-09-16\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Consultations (Qo'ng'iroq so'rovlari)",
+      "item": [
+        {
+          "name": "GET Barcha so'rovlar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/consultations",
+              "host": ["{{baseUrl}}"],
+              "path": ["consultations"]
+            }
+          }
+        },
+        {
+          "name": "POST So'rov qoldirish (User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bekzod Xoliqov\",\n  \"phone\": \"+998 93 111 22 33\",\n  \"status\": \"Yangi\",\n  \"createdAt\": \"2026-09-16 15:30\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/consultations",
+              "host": ["{{baseUrl}}"],
+              "path": ["consultations"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
