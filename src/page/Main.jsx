@@ -3,11 +3,22 @@ import heroVideo from '../assets/manshu_yerne_o_zgartir_va_na.mp4'
 import logoImg from '../assets/image.png'
 import reklamaBanner from '../assets/reklama_banner.jpg'
 import ProductSlider from './ProductSlider'
+import BannerSwiper from './BannerSwiper'
 
-const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }) => {
+const Main = ({
+  products = [],
+  onAddToCart,
+  onAddConsultation,
+  theme = 'light',
+  activeModalProduct: externalActiveModalProduct,
+  setActiveModalProduct: externalSetActiveModalProduct
+}) => {
   const [selectedCategory, setSelectedCategory] = useState('Barchasi')
   const [searchQuery, setSearchQuery] = useState('')
-  const [activeModalProduct, setActiveModalProduct] = useState(null)
+  const [catalogSort, setCatalogSort] = useState('default')
+  const [localActiveModalProduct, setLocalActiveModalProduct] = useState(null)
+  const activeModalProduct = externalActiveModalProduct !== undefined ? externalActiveModalProduct : localActiveModalProduct
+  const setActiveModalProduct = externalSetActiveModalProduct || setLocalActiveModalProduct
   const [leadForm, setLeadForm] = useState({ name: '', phone: '' })
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [promoCopied, setPromoCopied] = useState(false)
@@ -60,14 +71,22 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
     'Strim & Audio'
   ]
 
-  // Filter products by category and search
-  const filteredProducts = products.filter((p) => {
+  // Filter and sort products
+  let filteredProducts = products.filter((p) => {
     const matchesCategory = selectedCategory === 'Barchasi' || p.category === selectedCategory
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.category.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
   })
+
+  if (catalogSort === 'price-asc') {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.priceNum - b.priceNum)
+  } else if (catalogSort === 'price-desc') {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.priceNum - a.priceNum)
+  } else if (catalogSort === 'rating') {
+    filteredProducts = [...filteredProducts].sort((a, b) => (b.rating || 0) - (a.rating || 0))
+  }
 
   const handleLeadSubmit = (e) => {
     e.preventDefault()
@@ -91,6 +110,11 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
 
   return (
     <div className={`transition-colors duration-300 ${isDark ? 'bg-[#090d16] text-slate-100' : 'bg-white text-slate-900'}`}>
+      {/* ========================================================= */}
+      {/* 0. INTERACTIVE HERO PROMO SWIPER BANNER                   */}
+      {/* ========================================================= */}
+      <BannerSwiper onAddToCart={onAddToCart} />
+
       {/* ========================================================= */}
       {/* 1. HERO SECTION                                           */}
       {/* ========================================================= */}
@@ -312,42 +336,77 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
             </p>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative w-full md:w-72">
-            <input
-              type="text"
-              placeholder="Aksessuar nomi bo'yicha qidiring..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2.5 rounded-2xl border text-sm transition-all focus:outline-none focus:border-pink-500 ${
+          {/* Search & Sort Controls */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-72">
+              <input
+                type="text"
+                placeholder="Aksessuar nomi yoki brendi..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`w-full pl-10 pr-9 py-2.5 rounded-2xl border text-sm transition-all focus:outline-none focus:border-pink-500 ${
+                  isDark
+                    ? 'bg-[#111827] border-slate-700 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-pink-500/20'
+                    : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-pink-100'
+                }`}
+              />
+              <svg className="w-4 h-4 text-pink-500 absolute left-3.5 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-pink-500 font-bold p-1 cursor-pointer"
+                  title="Tozalash"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Sort Selector */}
+            <select
+              value={catalogSort}
+              onChange={(e) => setCatalogSort(e.target.value)}
+              className={`px-3 py-2.5 rounded-2xl border text-xs sm:text-sm font-semibold focus:outline-none cursor-pointer transition-colors ${
                 isDark
-                  ? 'bg-[#111827] border-slate-700 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-pink-500/20'
-                  : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-pink-100'
+                  ? 'bg-[#111827] border-slate-700 text-slate-200 focus:border-pink-500'
+                  : 'bg-white border-slate-200 text-slate-700 focus:border-pink-500'
               }`}
-            />
-            <svg className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            >
+              <option value="default">📊 Saralash: Odatiy</option>
+              <option value="price-asc">💵 Narx: Arzondan qimmatga</option>
+              <option value="price-desc">💎 Narx: Qimmatdan arzonga</option>
+              <option value="rating">⭐ Reyting: Eng yuqori</option>
+            </select>
           </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer active:scale-95 ${
-                selectedCategory === cat
-                  ? 'btn-pink shadow-md'
-                  : isDark
-                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
-                  : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Results Counter & Category Pills */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer active:scale-95 ${
+                  selectedCategory === cat
+                    ? 'btn-pink shadow-md'
+                    : isDark
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                    : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <div className="text-xs font-semibold text-slate-400 shrink-0">
+            Topildi: <span className="text-pink-600 font-bold">{filteredProducts.length} ta aksessuar</span>
+          </div>
         </div>
       </section>
 
@@ -400,6 +459,10 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
                     src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.onerror = null
+                      e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
+                    }}
                   />
                   {/* Badge */}
                   <span className="absolute top-3 left-3 bg-pink-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
@@ -503,20 +566,34 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
       </section>
 
       {/* ========================================================= */}
+      {/* ========================================================= */}
       {/* 4. REKLAMA & MAXSUS AKSIYA BANNERI                        */}
       {/* ========================================================= */}
       <section id="featured" className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div
-          className={`relative rounded-3xl overflow-hidden border transition-all duration-300 shadow-2xl ${
+          className={`relative rounded-3xl overflow-hidden border transition-all duration-300 shadow-2xl group ${
             isDark
-              ? 'bg-gradient-to-br from-[#121829] via-[#0e1424] to-[#150f24] border-pink-500/30 shadow-pink-950/40'
-              : 'bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 border-pink-500/40 shadow-slate-900/30 text-white'
+              ? 'bg-slate-950 border-pink-500/30 shadow-pink-950/40 text-white'
+              : 'bg-slate-950 border-pink-500/40 shadow-slate-900/40 text-white'
           }`}
         >
-          {/* Ambient Glows */}
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-10 w-80 h-80 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
+          {/* ORQA TARAFDAGI RASM (Background Image - So'zlarning to'liq orqasida) */}
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <img
+              src={reklamaBanner}
+              alt="Pro Gaming Setup Aksiyasi"
+              className="w-full h-full object-cover object-center scale-105 group-hover:scale-110 transition-transform duration-1000 opacity-40 sm:opacity-45"
+            />
+            {/* Matnlar aniq va yorqin ko'rinishi uchun to'q rangli gradient qoplamasi */}
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-purple-950/80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/60" />
+          </div>
 
+          {/* Ambient Glows */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl pointer-events-none z-0" />
+          <div className="absolute bottom-0 left-10 w-80 h-80 bg-violet-600/15 rounded-full blur-3xl pointer-events-none z-0" />
+
+          {/* OLD TARAFDAGI MATN VA MA'LUMOTLAR (Foreground Content - Z-Index 10) */}
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center p-6 sm:p-10 lg:p-14">
             {/* Left Col: Advertising Info & Offer */}
             <div className="lg:col-span-7 space-y-5 text-left">
@@ -548,7 +625,7 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
               </p>
 
               {/* Countdown Timer */}
-              <div className="bg-black/40 border border-white/10 p-3.5 sm:p-4 rounded-2xl backdrop-blur-md inline-block max-w-md w-full">
+              <div className="bg-black/50 border border-white/10 p-3.5 sm:p-4 rounded-2xl backdrop-blur-md inline-block max-w-md w-full">
                 <div className="flex items-center justify-between text-xs text-pink-300 font-bold mb-2">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-pink-500 animate-ping" />
@@ -630,38 +707,50 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
               </div>
             </div>
 
-            {/* Right Col: Eye-Popping Visual Showcase */}
+            {/* Right Col: High-End Glass Showcase Card in front */}
             <div className="lg:col-span-5 relative flex items-center justify-center">
-              <div className="relative w-full rounded-3xl overflow-hidden border-2 border-pink-500/40 shadow-2xl shadow-pink-500/20 group">
-                <img
-                  src={reklamaBanner}
-                  alt="Pro Gaming Setup Aksiyasi"
-                  className="w-full h-auto object-cover rounded-3xl group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
-
-                {/* Floating Badge Top Left */}
-                <div className="absolute top-4 left-4 bg-pink-600 text-white px-3 py-1.5 rounded-xl font-black text-xs shadow-lg flex items-center gap-1.5">
-                  <span>⚡</span> 35% TEJAB QOLING
+              <div className="w-full max-w-md rounded-3xl backdrop-blur-xl bg-black/40 border border-white/15 p-6 sm:p-7 shadow-2xl shadow-black/60 space-y-5">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="bg-pink-600 text-white px-3 py-1 rounded-xl font-black text-xs shadow-lg flex items-center gap-1.5">
+                    <span>⚡</span> 35% TEJAB QOLING
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md text-amber-300 px-3 py-1 rounded-xl font-bold text-xs border border-white/10 flex items-center gap-1">
+                    <span>★</span> 4.9 (128 ta baho)
+                  </div>
                 </div>
 
-                {/* Floating Badge Top Right */}
-                <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md text-amber-400 px-3 py-1.5 rounded-xl font-bold text-xs border border-white/10 shadow-lg flex items-center gap-1">
-                  <span>★</span> 4.9 (128 ta baho)
+                <div className="space-y-3">
+                  <div className="text-sm font-black text-white flex items-center justify-between">
+                    <span>4-in-1 Komplekt Tarkibi:</span>
+                    <span className="text-[11px] text-pink-400 font-bold">24s Yetkazish</span>
+                  </div>
+
+                  <ul className="space-y-2 text-xs sm:text-sm text-slate-200">
+                    <li className="flex items-center gap-2.5 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                      <span className="text-pink-400 font-bold text-sm">⌨️</span>
+                      <span>CyberBlade RGB Mexanik Klaviatura</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                      <span className="text-pink-400 font-bold text-sm">🖱️</span>
+                      <span>Phantom V3 26000 DPI Sichqoncha</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                      <span className="text-pink-400 font-bold text-sm">🎧</span>
+                      <span>ApexSound 7.1 Fazoviy Gaming Naushnik</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 bg-pink-500/15 p-2.5 rounded-xl border border-pink-500/40 text-pink-200 font-bold">
+                      <span className="text-sm">🎁</span>
+                      <span>Maxsus Sovg'a: XXL RGB Gaming Kovrik</span>
+                    </li>
+                  </ul>
                 </div>
 
-                {/* Bottom Overlay Info */}
-                <div className="absolute bottom-4 left-4 right-4 bg-black/75 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 text-left">
-                  <div className="text-xs font-bold text-white mb-0.5 flex items-center justify-between">
-                    <span>4-in-1 Komplekt tarkibi:</span>
-                    <span className="text-[11px] text-pink-400 font-black">Tezkor yetkazish 24s</span>
-                  </div>
-                  <div className="text-[11px] text-slate-300 flex items-center gap-2 flex-wrap">
-                    <span>• Klaviatura</span>
-                    <span>• Sichqoncha</span>
-                    <span>• Naushnik</span>
-                    <span className="text-emerald-400 font-bold">• Sovg'a: XXL RGB Pad</span>
-                  </div>
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    Omborda 7 ta qoldi
+                  </span>
+                  <span className="text-emerald-400 font-bold">✓ 2 Yillik Kafolat</span>
                 </div>
               </div>
             </div>
@@ -690,46 +779,108 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             {
-              icon: '🚀',
-              title: 'Tezkor Kuryer Yetkazishi',
-              desc: 'Toshkent bo\'yicha bir necha soatda, butun O\'zbekiston bo\'ylab 24 soat ichida eshigingizgacha xavfsiz yetkazib beramiz.'
+              icon: '🚚',
+              title: 'Tezkor Yetkazish',
+              sub: "Butun O'zbekiston bo'ylab",
+              badge: '24S ICHIDA',
+              tagColor: isDark ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-blue-50 text-blue-700 border-blue-200',
+              iconBg: isDark ? 'from-blue-500/25 to-sky-500/15 border-blue-500/30 text-blue-400' : 'from-blue-100 to-sky-50 border-blue-200/80 text-blue-600',
+              cardBorder: isDark ? 'border-slate-800/90 hover:border-blue-500/60' : 'border-slate-200/80 hover:border-blue-300',
+              hoverGlow: isDark ? 'hover:shadow-blue-500/10' : 'hover:shadow-blue-500/15',
+              lineGradient: 'from-blue-500 via-sky-400 to-cyan-400',
+              iconMotion: 'group-hover:translate-x-1.5 transition-transform duration-300 ease-out',
             },
             {
               icon: '🛡️',
-              title: '2 Yillik Rasmiy Kafolat',
-              desc: 'Har bir aksessuar rasmiy kafolat taloniga ega. Muammo yuzaga kelsa, servis markazimiz orqali darhol almashtirib beramiz.'
-            },
-            {
-              icon: '💎',
-              title: '100% Original Mahsulotlar',
-              desc: 'Hech qanday nusxa yoki sifatsiz xomashyo yo\'q. Faqat xalqaro standartlarga javob beruvchi original brend modellari.'
+              title: '2 Yillik Kafolat',
+              sub: '100% original uskunalar',
+              badge: 'RASMIY KAFOLAT',
+              tagColor: isDark ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200',
+              iconBg: isDark ? 'from-emerald-500/25 to-teal-500/15 border-emerald-500/30 text-emerald-400' : 'from-emerald-100 to-teal-50 border-emerald-200/80 text-emerald-600',
+              cardBorder: isDark ? 'border-slate-800/90 hover:border-emerald-500/60' : 'border-slate-200/80 hover:border-emerald-300',
+              hoverGlow: isDark ? 'hover:shadow-emerald-500/10' : 'hover:shadow-emerald-500/15',
+              lineGradient: 'from-emerald-500 via-teal-400 to-green-400',
+              iconMotion: 'group-hover:scale-110 transition-transform duration-300 ease-out',
             },
             {
               icon: '💳',
-              title: 'Qulay To\'lov & Bo\'lib To\'lash',
-              desc: 'Payme, Click, Uzum Nasiya orqali ortiqcha hujjatlarsiz muddatli to\'lovga xarid qilish imkoniyati.'
-            }
-          ].map((item, idx) => (
+              title: "Qulay To'lov",
+              sub: 'Click, Payme, Uzum Nasiya',
+              badge: "0% BO'LIB TO'LASH",
+              tagColor: isDark ? 'bg-violet-500/20 text-violet-300 border-violet-500/30' : 'bg-violet-50 text-violet-700 border-violet-200',
+              iconBg: isDark ? 'from-violet-500/25 to-purple-500/15 border-violet-500/30 text-violet-400' : 'from-violet-100 to-purple-50 border-violet-200/80 text-violet-600',
+              cardBorder: isDark ? 'border-slate-800/90 hover:border-violet-500/60' : 'border-slate-200/80 hover:border-violet-300',
+              hoverGlow: isDark ? 'hover:shadow-violet-500/10' : 'hover:shadow-violet-500/15',
+              lineGradient: 'from-violet-500 via-purple-400 to-indigo-400',
+              iconMotion: 'group-hover:-rotate-6 group-hover:scale-110 transition-transform duration-300 ease-out',
+            },
+            {
+              icon: '🔄',
+              title: '14 Kun Almashtirish',
+              sub: 'Xavfsiz xarid kafolati',
+              badge: '100% XAVFSIZ',
+              tagColor: isDark ? 'bg-pink-500/20 text-pink-300 border-pink-500/30' : 'bg-pink-50 text-pink-700 border-pink-200',
+              iconBg: isDark ? 'from-pink-500/25 to-rose-500/15 border-pink-500/30 text-pink-400' : 'from-pink-100 to-rose-50 border-pink-200/80 text-pink-600',
+              cardBorder: isDark ? 'border-slate-800/90 hover:border-pink-500/60' : 'border-slate-200/80 hover:border-pink-300',
+              hoverGlow: isDark ? 'hover:shadow-pink-500/10' : 'hover:shadow-pink-500/15',
+              lineGradient: 'from-pink-500 via-rose-400 to-fuchsia-400',
+              iconMotion: 'group-hover:rotate-180 transition-transform duration-700 ease-out',
+            },
+          ].map((item, i) => (
             <div
-              key={idx}
-              className={`p-8 rounded-3xl text-center border transition-all ${
-                isDark
-                  ? 'bg-[#111827] border-slate-800 text-white'
-                  : 'bg-white border-slate-100 text-slate-900 shadow-xs'
-              }`}
+              key={i}
+              className={`group relative overflow-hidden rounded-3xl p-5 sm:p-6 transition-all duration-300 
+                hover:-translate-y-1.5 hover:shadow-xl ${item.hoverGlow}
+                border ${item.cardBorder}
+                ${isDark 
+                  ? 'bg-slate-900/90 shadow-md shadow-black/40' 
+                  : 'bg-white shadow-sm shadow-slate-200/60 hover:bg-white'}
+              `}
             >
+              {/* Corner glow on hover */}
               <div
-                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5 ${
-                  isDark ? 'bg-slate-800 text-pink-400' : 'bg-pink-50 text-pink-600'
-                }`}
-              >
-                {item.icon}
+                className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-gradient-to-br ${item.lineGradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 pointer-events-none`}
+              />
+
+              <div className="relative flex items-center sm:items-start gap-4 z-10">
+                {/* Animated Icon Pedestal */}
+                <div
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border bg-gradient-to-br ${item.iconBg} shadow-inner transition-all duration-300 group-hover:scale-105 group-hover:shadow-md`}
+                >
+                  <span className={`text-2xl sm:text-3xl select-none inline-block ${item.iconMotion}`}>
+                    {item.icon}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                    <h4 className={`text-sm sm:text-base font-extrabold tracking-tight transition-colors duration-200 ${
+                      isDark ? 'text-white group-hover:text-pink-300' : 'text-slate-900 group-hover:text-pink-600'
+                    }`}>
+                      {item.title}
+                    </h4>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border tracking-wide uppercase ${item.tagColor}`}>
+                      {item.badge}
+                    </span>
+                  </div>
+                  <p className={`text-xs leading-relaxed font-medium transition-colors ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    {item.sub}
+                  </p>
+                </div>
               </div>
-              <h3 className={`text-lg font-bold mb-2.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
-              <p className={`text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{item.desc}</p>
+
+              {/* Bottom animated accent highlight line */}
+              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                <div
+                  className={`h-full w-12 group-hover:w-full bg-gradient-to-r ${item.lineGradient} transition-all duration-500 ease-out`}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -911,6 +1062,10 @@ const Main = ({ products = [], onAddToCart, onAddConsultation, theme = 'light' }
                 className={`w-full aspect-square rounded-2xl object-cover border ${
                   isDark ? 'border-slate-800' : 'border-slate-100'
                 }`}
+                onError={(e) => {
+                  e.target.onerror = null
+                  e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
+                }}
               />
               <div className="space-y-3">
                 <span className="text-xs font-bold text-pink-600 bg-pink-50 dark:bg-pink-950/60 dark:text-pink-400 px-2.5 py-1 rounded-md">

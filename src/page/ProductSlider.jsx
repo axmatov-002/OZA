@@ -178,6 +178,10 @@ const ProductSlider = ({
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     draggable={false}
+                    onError={(e) => {
+                      e.target.onerror = null
+                      e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
+                    }}
                   />
                   {/* Badge */}
                   {product.badge && (

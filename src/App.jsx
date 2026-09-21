@@ -6,9 +6,13 @@ import AdminPanel from './page/AdminPanel'
 import ManagerPanel from './page/ManagerPanel'
 import UserOrders from './page/UserOrders'
 import AuthModal from './page/AuthModal'
+import SearchModal from './page/SearchModal'
 import initialDb from '../db.json'
 
 const App = () => {
+  // Global Search Modal State
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [activeModalProduct, setActiveModalProduct] = useState(null)
   // Theme State: 'light' (Oq) | 'dark' (Qora)
   const [theme, setTheme] = useState(() => {
     try {
@@ -329,6 +333,7 @@ const App = () => {
           <Header
             totalItems={totalItems}
             onOpenCart={() => setCartOpen(true)}
+            onOpenSearch={() => setIsSearchOpen(true)}
             currentUser={currentUser}
             onLogout={handleLogout}
             onOpenAuthModal={() => setIsAuthModalOpen(true)}
@@ -345,6 +350,8 @@ const App = () => {
               onAddToCart={addToCart}
               onAddConsultation={handleAddConsultation}
               theme={theme}
+              activeModalProduct={activeModalProduct}
+              setActiveModalProduct={setActiveModalProduct}
             />
           </main>
 
@@ -490,6 +497,16 @@ const App = () => {
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
         onRegisterUser={handleRegisterUser}
+      />
+
+      {/* Global Instant Search Modal */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        products={products}
+        onAddToCart={addToCart}
+        onOpenProduct={(p) => setActiveModalProduct(p)}
+        theme={theme}
       />
     </div>
   )
