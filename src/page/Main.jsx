@@ -111,11 +111,6 @@ const Main = ({
   return (
     <div className={`transition-colors duration-300 ${isDark ? 'bg-[#090d16] text-slate-100' : 'bg-white text-slate-900'}`}>
       {/* ========================================================= */}
-      {/* 0. INTERACTIVE HERO PROMO SWIPER BANNER                   */}
-      {/* ========================================================= */}
-      <BannerSwiper onAddToCart={onAddToCart} />
-
-      {/* ========================================================= */}
       {/* 1. HERO SECTION                                           */}
       {/* ========================================================= */}
       <section
@@ -298,6 +293,13 @@ const Main = ({
           </div>
         </div>
       </section>
+
+      {/* ========================================================= */}
+      {/* 1.5. INTERACTIVE HERO PROMO SWIPER BANNER                 */}
+      {/* ========================================================= */}
+      <div className="pt-2 pb-6">
+        <BannerSwiper onAddToCart={onAddToCart} />
+      </div>
 
       {/* ========================================================= */}
       {/* 2. PRODUCT SLIDER — FEATURED & POPULAR                    */}
