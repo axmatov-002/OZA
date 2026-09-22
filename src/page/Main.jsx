@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
 import heroVideo from '../assets/manshu_yerne_o_zgartir_va_na.mp4'
+import upgradeVideo from '../assets/upgrade_showcase.webm'
+import heroPoster from '../assets/hero_gaming_setup.jpg'
 import logoImg from '../assets/image.png'
 import reklamaBanner from '../assets/reklama_banner.jpg'
 import ProductSlider from './ProductSlider'
@@ -358,21 +360,34 @@ const Main = ({
                   </span>
                 </div>
 
-                {/* Optimized Video: preload="metadata" saves bandwidth & ensures instant loading */}
-                <div className="relative my-2 overflow-hidden rounded-2xl shadow-2xl border-2 border-pink-500/30 bg-slate-950 group">
+                {/* Modern UPGRADE Cyber Showcase Video with Ultra-HD Rig & Brand Identity */}
+                <div className="relative my-2 overflow-hidden rounded-2xl shadow-2xl border-2 border-pink-500/40 bg-slate-950 group">
                   <video
-                    src={heroVideo}
                     autoPlay
                     loop
                     muted
                     playsInline
-                    preload="metadata"
+                    preload="auto"
+                    poster={heroPoster}
                     className="w-full h-auto aspect-video object-cover rounded-2xl group-hover:scale-108 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
+                  >
+                    <source src={upgradeVideo} type="video/webm" />
+                    <source src={heroVideo} type="video/mp4" />
+                  </video>
                   
-                  <span className="absolute bottom-2.5 right-2.5 bg-black/70 backdrop-blur-md text-[10px] text-white px-2 py-0.5 rounded-md font-mono border border-white/20">
-                    4K Ultra HD
+                  {/* Subtle glassmorphic cyber overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-black/20 pointer-events-none" />
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-pink-500/20 pointer-events-none" />
+                  
+                  {/* Glowing UPGRADE Badge Overlay */}
+                  <div className="absolute top-2.5 left-2.5 flex items-center gap-2 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-pink-500/50 shadow-lg shadow-pink-500/25">
+                    <img src={logoImg} alt="UPGRADE" className="h-4 w-auto object-contain filter drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  </div>
+
+                  {/* 4K Ultra HD Badge */}
+                  <span className="absolute bottom-2.5 right-2.5 bg-black/80 backdrop-blur-md text-[10px] text-pink-300 font-black px-2.5 py-1 rounded-lg font-mono border border-pink-500/40 shadow-md flex items-center gap-1">
+                    <span className="text-amber-400">✦</span> 4K ULTRA HD
                   </span>
                 </div>
 
