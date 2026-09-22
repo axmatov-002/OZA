@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import Header from './page/Header'
 import Main from './page/Main'
 import Footer from './page/Footer'
-import AdminPanel from './page/AdminPanel'
-import ManagerPanel from './page/ManagerPanel'
-import UserOrders from './page/UserOrders'
-import AuthModal from './page/AuthModal'
-import SearchModal from './page/SearchModal'
 import initialDb from '../db.json'
+
+// Lazy-loaded heavy components for lightning-fast initial load
+const AdminPanel = lazy(() => import('./page/AdminPanel'))
+const ManagerPanel = lazy(() => import('./page/ManagerPanel'))
+const UserOrders = lazy(() => import('./page/UserOrders'))
+const AuthModal = lazy(() => import('./page/AuthModal'))
+const SearchModal = lazy(() => import('./page/SearchModal'))
 
 const App = () => {
   // Global Search Modal State
@@ -295,38 +297,44 @@ const App = () => {
 
       {/* RENDER VIEW BASED ON ACTIVE ROLE */}
       {currentRole === 'admin' ? (
-        <AdminPanel
-          products={products}
-          setProducts={setProducts}
-          orders={orders}
-          users={users}
-          setUsers={setUsers}
-          theme={theme}
-          onSetTheme={setTheme}
-          onSwitchRole={handleRequestRole}
-          onLogout={handleLogout}
-        />
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold text-pink-600 text-lg">👑 Admin Paneli Yuklanmoqda...</div>}>
+          <AdminPanel
+            products={products}
+            setProducts={setProducts}
+            orders={orders}
+            users={users}
+            setUsers={setUsers}
+            theme={theme}
+            onSetTheme={setTheme}
+            onSwitchRole={handleRequestRole}
+            onLogout={handleLogout}
+          />
+        </Suspense>
       ) : currentRole === 'manager' ? (
-        <ManagerPanel
-          orders={orders}
-          setOrders={setOrders}
-          products={products}
-          setProducts={setProducts}
-          consultations={consultations}
-          setConsultations={setConsultations}
-          theme={theme}
-          onSetTheme={setTheme}
-          onSwitchRole={handleRequestRole}
-          onLogout={handleLogout}
-        />
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold text-pink-600 text-lg">👔 Menejer Paneli Yuklanmoqda...</div>}>
+          <ManagerPanel
+            orders={orders}
+            setOrders={setOrders}
+            products={products}
+            setProducts={setProducts}
+            consultations={consultations}
+            setConsultations={setConsultations}
+            theme={theme}
+            onSetTheme={setTheme}
+            onSwitchRole={handleRequestRole}
+            onLogout={handleLogout}
+          />
+        </Suspense>
       ) : userView === 'orders' ? (
-        <UserOrders
-          orders={orders}
-          currentUser={currentUser}
-          theme={theme}
-          onSetTheme={setTheme}
-          onBackToShop={() => setUserView('store')}
-        />
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold text-pink-600 text-lg">📦 Buyurtmalar Yuklanmoqda...</div>}>
+          <UserOrders
+            orders={orders}
+            currentUser={currentUser}
+            theme={theme}
+            onSetTheme={setTheme}
+            onBackToShop={() => setUserView('store')}
+          />
+        </Suspense>
       ) : (
         <>
           {/* Header with User Info, Logout, and Theme Switcher */}
@@ -491,23 +499,31 @@ const App = () => {
       )}
 
       {/* Startup & Role Selection Auth Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        users={users}
-        onClose={() => setIsAuthModalOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
-        onRegisterUser={handleRegisterUser}
-      />
+      <Suspense fallback={null}>
+        {isAuthModalOpen && (
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            users={users}
+            onClose={() => setIsAuthModalOpen(false)}
+            onLoginSuccess={handleLoginSuccess}
+            onRegisterUser={handleRegisterUser}
+          />
+        )}
+      </Suspense>
 
       {/* Global Instant Search Modal */}
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        products={products}
-        onAddToCart={addToCart}
-        onOpenProduct={(p) => setActiveModalProduct(p)}
-        theme={theme}
-      />
+      <Suspense fallback={null}>
+        {isSearchOpen && (
+          <SearchModal
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            products={products}
+            onAddToCart={addToCart}
+            onOpenProduct={(p) => setActiveModalProduct(p)}
+            theme={theme}
+          />
+        )}
+      </Suspense>
     </div>
   )
 }

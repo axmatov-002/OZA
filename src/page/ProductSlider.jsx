@@ -164,19 +164,21 @@ const ProductSlider = ({
               style={{ width: `${cardWidthPct}%` }}
             >
               <div
-                className={`rounded-3xl border overflow-hidden flex flex-col h-full group cursor-pointer transition-all duration-300 ${
+                className={`rounded-3xl border overflow-hidden flex flex-col h-full group cursor-pointer transition-all duration-300 cyber-card ${
                   theme === 'dark'
-                    ? 'bg-[#111827] border-slate-800 hover:border-pink-500/60 shadow-lg shadow-black/20'
-                    : 'bg-white border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-md'
+                    ? 'bg-[#111827]/90 border-slate-800 hover:border-pink-500/60 shadow-lg shadow-black/30'
+                    : 'bg-white border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-xl hover:shadow-pink-500/10'
                 }`}
                 onClick={() => onOpenProduct && onOpenProduct(product)}
               >
                 {/* Image */}
                 <div className={`relative aspect-[4/3] overflow-hidden ${theme === 'dark' ? 'bg-slate-900/80' : 'bg-slate-50'}`}>
                   <img
+                    loading="lazy"
+                    decoding="async"
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
                     draggable={false}
                     onError={(e) => {
                       e.target.onerror = null
@@ -185,13 +187,13 @@ const ProductSlider = ({
                   />
                   {/* Badge */}
                   {product.badge && (
-                    <span className="absolute top-3 left-3 bg-pink-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
+                    <span className="absolute top-3 left-3 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
                       {product.badge}
                     </span>
                   )}
                   {/* Stock */}
-                  <span className={`absolute bottom-3 left-3 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded-md shadow-xs ${
-                    theme === 'dark' ? 'bg-slate-900/90 text-slate-200' : 'bg-white/90 text-slate-700'
+                  <span className={`absolute bottom-3 left-3 backdrop-blur-md text-[10px] font-extrabold px-2.5 py-0.5 rounded-xl shadow-xs border ${
+                    theme === 'dark' ? 'bg-slate-900/90 text-slate-200 border-white/10' : 'bg-white/90 text-slate-700 border-slate-200'
                   }`}>
                     Omborda: {product.stock || 10} dona
                   </span>
@@ -201,36 +203,38 @@ const ProductSlider = ({
                 <div className="p-4 flex flex-col flex-1 justify-between">
                   <div>
                     <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className={`font-semibold px-2 py-0.5 rounded-md ${
-                        theme === 'dark' ? 'bg-pink-950/60 text-pink-400' : 'bg-pink-50 text-pink-600'
+                      <span className={`font-bold px-2 py-0.5 rounded-lg text-[11px] ${
+                        theme === 'dark' ? 'bg-pink-950/70 text-pink-400 border border-pink-800/40' : 'bg-pink-50 text-pink-600 border border-pink-100'
                       }`}>
                         {product.category}
                       </span>
-                      <div className="flex items-center gap-0.5 text-amber-500 font-bold">
+                      <div className="flex items-center gap-1 text-amber-400 font-black">
                         <span>★</span>
-                        <span className={`text-xs ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>{product.rating}</span>
+                        <span className={`text-xs ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>{product.rating}</span>
                       </div>
                     </div>
-                    <h3 className={`font-bold text-sm leading-snug line-clamp-2 mb-2 transition-colors ${
-                      theme === 'dark' ? 'text-white hover:text-pink-400' : 'text-slate-900 hover:text-pink-600'
+                    <h3 className={`font-black text-sm leading-snug line-clamp-2 mb-2 transition-colors ${
+                      theme === 'dark' ? 'text-white group-hover:text-pink-400' : 'text-slate-900 group-hover:text-pink-600'
                     }`}>
                       {product.name}
                     </h3>
                   </div>
 
-                  <div className={`flex items-center justify-between mt-auto pt-2 border-t ${
+                  <div className={`flex items-center justify-between mt-auto pt-3 border-t ${
                     theme === 'dark' ? 'border-slate-800' : 'border-slate-100'
                   }`}>
                     <div>
-                      <div className="text-xs text-slate-400 line-through">{product.oldPrice}</div>
-                      <div className="font-black text-pink-600 text-base leading-tight">{product.price}</div>
+                      {product.oldPrice && (
+                        <div className="text-[11px] text-slate-400 line-through font-semibold">{product.oldPrice}</div>
+                      )}
+                      <div className="font-black text-pink-600 dark:text-pink-400 text-base leading-tight tracking-tight">{product.price}</div>
                     </div>
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 ${
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer active:scale-95 ${
                         addedId === product.id
                           ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30'
-                          : 'btn-pink shadow-sm'
+                          : 'btn-pink btn-vauu-shine shadow-md shadow-pink-500/20'
                       }`}
                     >
                       {addedId === product.id ? (
@@ -238,14 +242,14 @@ const ProductSlider = ({
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                           </svg>
-                          Qo'shildi
+                          <span>Qo'shildi</span>
                         </>
                       ) : (
                         <>
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                          Savatga
+                          <span>Savatga</span>
                         </>
                       )}
                     </button>

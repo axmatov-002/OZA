@@ -157,6 +157,8 @@ const BannerSwiper = ({ onAddToCart }) => {
                     
                     <div className="w-48 h-56 sm:w-60 sm:h-72 md:w-64 md:h-80 rounded-3xl overflow-hidden shadow-2xl border-2 border-white/50 relative bg-black/20">
                       <img
+                        loading="lazy"
+                        decoding="async"
                         src={slide.modelImg}
                         alt={slide.title}
                         className="w-full h-full object-cover object-center"
@@ -192,11 +194,11 @@ const BannerSwiper = ({ onAddToCart }) => {
                     {slide.desc}
                   </p>
 
-                  {/* CTA Button (exact match to screenshot purple rounded pill with arrow: "Buyurtma qilish >") */}
+                  {/* CTA Button */}
                   <div>
                     <a
                       href="#catalog"
-                      className={`inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-base sm:text-lg font-bold transition-all duration-300 transform active:scale-95 cursor-pointer ${slide.buttonClass}`}
+                      className={`inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-base sm:text-lg font-black transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer btn-vauu-shine ${slide.buttonClass}`}
                     >
                       <span>{slide.buttonText}</span>
                     </a>
@@ -208,6 +210,8 @@ const BannerSwiper = ({ onAddToCart }) => {
                   <div className="relative group/gadget">
                     <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl p-3 bg-white/10 backdrop-blur-xl border-2 border-white/30 shadow-2xl flex items-center justify-center transform group-hover/gadget:rotate-3 transition-transform duration-500">
                       <img
+                        loading="lazy"
+                        decoding="async"
                         src={slide.gadgetImg}
                         alt="Mahsulot"
                         className="w-full h-full object-contain rounded-2xl drop-shadow-2xl"
