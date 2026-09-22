@@ -58,7 +58,7 @@ const ManagerPanel = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             <div className="flex items-center gap-3">
-              <img src={logoImg} alt="ORA" className="h-9 sm:h-10 w-auto object-contain" />
+              <img src={logoImg} alt="UPGRADE" className="h-9 sm:h-10 w-auto object-contain" />
               <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-purple-100 text-purple-700 border border-purple-200">
                   👔 MENEJER PANELI

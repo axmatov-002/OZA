@@ -67,7 +67,7 @@ const Header = ({
             <div className="relative">
               <img
                 src={logoImg}
-                alt="ORA Kompyuterlar"
+                alt="UPGRADE Aksessuarlar"
                 className={`w-auto object-contain transition-all duration-300 group-hover:scale-105 ${
                   scrolled ? 'h-8 sm:h-9' : 'h-9 sm:h-11'
                 }`}

@@ -1117,7 +1117,7 @@ const Main = ({
           <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
 
           <div className="max-w-xl mx-auto relative z-10">
-            <img loading="lazy" decoding="async" src={logoImg} alt="ORA" className="h-12 sm:h-14 w-auto mx-auto mb-4 object-contain" />
+            <img loading="lazy" decoding="async" src={logoImg} alt="UPGRADE" className="h-12 sm:h-14 w-auto mx-auto mb-4 object-contain" />
             <h2 className={`text-2xl sm:text-4xl font-black mb-3 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
               Qaysi Aksessuar Sizga Mos Kelishini Bilmayapsizmi?
             </h2>

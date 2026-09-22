@@ -140,8 +140,8 @@ const Footer = ({ theme = 'light' }) => {
                 <div className="bg-white/95 hover:bg-white px-3 py-2 rounded-2xl inline-block shadow-lg shadow-pink-500/10 transition-all duration-300 group-hover:scale-105">
                   <img
                     src={logoImg}
-                    alt="ORA"
-                    className="h-10 sm:h-11 w-auto object-contain"
+                    alt="UPGRADE"
+                    className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               </a>

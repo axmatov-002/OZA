@@ -17,7 +17,7 @@ const UserOrders = ({ orders, currentUser, onBackToShop, theme = 'light' }) => {
         {/* Header Bar */}
         <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b mb-8 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
           <div className="flex items-center gap-3">
-            <img src={logoImg} alt="ORA" className="h-9 sm:h-10 w-auto object-contain" />
+            <img src={logoImg} alt="UPGRADE" className="h-9 sm:h-10 w-auto object-contain" />
             <div className={`border-l pl-3 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
               <h1 className={`text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {currentUser ? `${currentUser.name} - Buyurtmalari` : 'Mening Buyurtmalarim'}
