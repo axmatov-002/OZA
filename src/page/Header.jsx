@@ -79,15 +79,13 @@ const Header = ({
 
           {/* Logo */}
           <a href="#" className="flex items-center gap-2 group shrink-0">
-            <div className={`relative transition-all duration-300 ${isDark ? 'bg-white/95 px-2 py-1 rounded-xl shadow-xs' : ''
-              }`}>
-              <img
-                src={logoImg}
-                alt="UPGRADE Aksessuarlar"
-                className={`w-auto object-contain transition-all duration-300 group-hover:scale-105 ${scrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-9'
-                  }`}
-              />
-            </div>
+            <img
+              src={logoImg}
+              alt="UPGRADE Aksessuarlar"
+              className={`w-auto object-contain transition-all duration-300 group-hover:scale-105 ${
+                scrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-9'
+              }`}
+            />
           </a>
 
           {/* Desktop Navigation Links (xl+) */}
@@ -106,17 +104,20 @@ const Header = ({
               </a>
             ))}
 
-            <button
-              onClick={onOpenOrders}
-              className={`relative px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-1 group cursor-pointer ${isDark
-                  ? 'text-slate-300 hover:text-pink-400 hover:bg-slate-800/60'
-                  : 'text-slate-600 hover:text-pink-600 hover:bg-pink-50/80'
+            {currentUser && (
+              <button
+                onClick={onOpenOrders}
+                className={`relative px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-1 group cursor-pointer ${
+                  isDark
+                    ? 'text-slate-300 hover:text-pink-400 hover:bg-slate-800/60'
+                    : 'text-slate-600 hover:text-pink-600 hover:bg-pink-50/80'
                 }`}
-            >
-              <span>📦</span>
-              <span>{t('nav_my_orders', 'Buyurtmalar')}</span>
-              <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-pink-500 rounded-full group-hover:w-4/5 transition-all duration-300" />
-            </button>
+              >
+                <span>📦</span>
+                <span>{t('nav_my_orders', 'Buyurtmalar')}</span>
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-pink-500 rounded-full group-hover:w-4/5 transition-all duration-300" />
+              </button>
+            )}
           </nav>
 
           {/* Right Action Area */}
@@ -445,19 +446,22 @@ const Header = ({
             </a>
           ))}
 
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false)
-              onOpenOrders()
-            }}
-            className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer ${isDark
-                ? 'text-slate-200 hover:bg-slate-800 hover:text-pink-400'
-                : 'text-slate-700 hover:bg-pink-50 hover:text-pink-600'
+          {currentUser && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false)
+                onOpenOrders()
+              }}
+              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer ${
+                isDark
+                  ? 'text-slate-200 hover:bg-slate-800 hover:text-pink-400'
+                  : 'text-slate-700 hover:bg-pink-50 hover:text-pink-600'
               }`}
-          >
-            <span className="text-base">📦</span>
-            {t('nav_my_orders', 'Mening Buyurtmalarim')}
-          </button>
+            >
+              <span className="text-base">📦</span>
+              {t('nav_my_orders', 'Mening Buyurtmalarim')}
+            </button>
+          )}
 
           <div className={`pt-3 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
             <button

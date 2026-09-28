@@ -177,13 +177,11 @@ const Footer = ({ theme: _theme = 'light' }) => {
             {/* Brand column */}
             <div className="lg:col-span-2 space-y-5">
               <a href="#" className="inline-block group">
-                <div className="bg-white/95 hover:bg-white px-3 py-2 rounded-2xl inline-block shadow-lg shadow-pink-500/10 transition-all duration-300 group-hover:scale-105">
-                  <img
-                    src={logoImg}
-                    alt="UPGRADE"
-                    className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
+                <img
+                  src={logoImg}
+                  alt="UPGRADE"
+                  className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                />
               </a>
               <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
                 {t('footer_desc', "O'zbekistondagi eng zamonaviy kompyuter aksessuarlari va geyming jihozlari do'koni. Ish va o'yin uchun eng sara uskunalar.")}
