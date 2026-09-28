@@ -1,15 +1,22 @@
-import React, { useState, useEffect, useMemo, memo } from 'react'
-import heroVideo from '../assets/manshu_yerne_o_zgartir_va_na.mp4'
-import upgradeVideo from '../assets/upgrade_showcase.webm'
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react'
+import upgradeVideo from '../assets/gemini_generated_video_ede5fb09.mp4'
 import heroPoster from '../assets/hero_gaming_setup.jpg'
 import logoImg from '../assets/image.png'
 import reklamaBanner from '../assets/reklama_banner.jpg'
 import ProductSlider from './ProductSlider'
 import BannerSwiper from './BannerSwiper'
+import TiltCard3D from '../components/TiltCard3D'
+import SwitchSoundTester from '../components/SwitchSoundTester'
+import SetupBuilder from '../components/SetupBuilder'
+import FaqSection from '../components/FaqSection'
+import CompareModal from '../components/CompareModal'
+import { soundFx } from '../utils/soundEffects'
+import { useLanguage } from '../context/LanguageContext'
 
 // High-Performance Independent Countdown Timer Component
 // Does not trigger re-render of the parent Main component!
 const PromoCountdownTimer = memo(() => {
+  const { lang, t } = useLanguage()
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, minutes: 35, seconds: 48 })
 
   useEffect(() => {
@@ -30,26 +37,28 @@ const PromoCountdownTimer = memo(() => {
       <div className="flex items-center justify-between text-xs text-pink-300 font-black mb-2.5">
         <span className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping" />
-          Aksiya yakunlanishiga qoldi:
+          {t('promo_countdown_title', 'Aksiya yakunlanishiga qoldi:')}
         </span>
-        <span className="text-[11px] text-amber-400 font-extrabold">Cheklangan: faqat 7 ta</span>
+        <span className="text-[11px] text-amber-400 font-extrabold">
+          {lang === 'ru' ? 'Ограничено: всего 7 шт' : lang === 'en' ? 'Limited: only 7 left' : 'Cheklangan: faqat 7 ta'}
+        </span>
       </div>
       <div className="grid grid-cols-4 gap-2 text-center">
         <div className="bg-white/10 border border-white/15 rounded-xl py-2.5">
           <div className="text-xl sm:text-2xl font-black text-white font-mono">{String(timeLeft.days).padStart(2, '0')}</div>
-          <div className="text-[9px] uppercase tracking-wider text-slate-300 font-bold">Kun</div>
+          <div className="text-[9px] uppercase tracking-wider text-slate-300 font-bold">{t('timer_days', 'Kun')}</div>
         </div>
         <div className="bg-white/10 border border-white/15 rounded-xl py-2.5">
           <div className="text-xl sm:text-2xl font-black text-white font-mono">{String(timeLeft.hours).padStart(2, '0')}</div>
-          <div className="text-[9px] uppercase tracking-wider text-slate-300 font-bold">Soat</div>
+          <div className="text-[9px] uppercase tracking-wider text-slate-300 font-bold">{t('timer_hours', 'Soat')}</div>
         </div>
         <div className="bg-white/10 border border-white/15 rounded-xl py-2.5">
           <div className="text-xl sm:text-2xl font-black text-white font-mono">{String(timeLeft.minutes).padStart(2, '0')}</div>
-          <div className="text-[9px] uppercase tracking-wider text-slate-300 font-bold">Daqiqa</div>
+          <div className="text-[9px] uppercase tracking-wider text-slate-300 font-bold">{t('timer_minutes', 'Daqiqa')}</div>
         </div>
         <div className="bg-pink-600/40 border border-pink-500/60 rounded-xl py-2.5 shadow-inner">
           <div className="text-xl sm:text-2xl font-black text-pink-300 font-mono animate-pulse">{String(timeLeft.seconds).padStart(2, '0')}</div>
-          <div className="text-[9px] uppercase tracking-wider text-pink-200 font-bold">Soniya</div>
+          <div className="text-[9px] uppercase tracking-wider text-pink-200 font-bold">{t('timer_seconds', 'Soniya')}</div>
         </div>
       </div>
     </div>
@@ -58,16 +67,41 @@ const PromoCountdownTimer = memo(() => {
 
 // Isolated Live Purchase Ticker (Doesn't re-render entire page)
 const LivePurchaseTicker = memo(() => {
+  const { lang, t } = useLanguage()
   const [liveSale, setLiveSale] = useState(null)
   const [hideLiveSale, setHideLiveSale] = useState(false)
 
   useEffect(() => {
     if (hideLiveSale) return
     const fakeSales = [
-      { name: 'Sarvarbek', city: 'Toshkent', item: 'CyberBlade Pro RGB Klaviatura', time: '1 daqiqa oldin', icon: '⌨️' },
-      { name: 'Jasur', city: 'Samarqand', item: 'Phantom V3 26000 DPI Sichqoncha', time: 'Hozirgina', icon: '🖱️' },
-      { name: 'Malika', city: "Farg'ona", item: 'ApexSound 7.1 Fazoviy Naushnik', time: '3 daqiqa oldin', icon: '🎧' },
-      { name: 'Aziz', city: 'Buxoro', item: 'PRO Kiber Gaming 4-in-1 Komplekt', time: '5 daqiqa oldin', icon: '🔥' }
+      { 
+        name: 'Sarvarbek', 
+        city: lang === 'ru' ? 'Ташкент' : lang === 'en' ? 'Tashkent' : 'Toshkent', 
+        item: lang === 'ru' ? 'CyberBlade Pro RGB Клавиатура' : lang === 'en' ? 'CyberBlade Pro RGB Keyboard' : 'CyberBlade Pro RGB Klaviatura', 
+        time: lang === 'ru' ? '1 мин назад' : lang === 'en' ? '1 min ago' : '1 daqiqa oldin', 
+        icon: '⌨️' 
+      },
+      { 
+        name: 'Jasur', 
+        city: lang === 'ru' ? 'Самарканд' : lang === 'en' ? 'Samarkand' : 'Samarqand', 
+        item: lang === 'ru' ? 'Phantom V3 26000 DPI Мышь' : lang === 'en' ? 'Phantom V3 26000 DPI Mouse' : 'Phantom V3 26000 DPI Sichqoncha', 
+        time: lang === 'ru' ? 'Только что' : lang === 'en' ? 'Just now' : 'Hozirgina', 
+        icon: '🖱️' 
+      },
+      { 
+        name: 'Malika', 
+        city: lang === 'ru' ? 'Фергана' : lang === 'en' ? 'Fergana' : "Farg'ona", 
+        item: lang === 'ru' ? 'ApexSound 7.1 Пространственные наушники' : lang === 'en' ? 'ApexSound 7.1 Spatial Headset' : 'ApexSound 7.1 Fazoviy Naushnik', 
+        time: lang === 'ru' ? '3 мин назад' : lang === 'en' ? '3 mins ago' : '3 daqiqa oldin', 
+        icon: '🎧' 
+      },
+      { 
+        name: 'Aziz', 
+        city: lang === 'ru' ? 'Бухара' : lang === 'en' ? 'Bukhara' : 'Buxoro', 
+        item: lang === 'ru' ? 'PRO Cyber Gaming 4-в-1 Комплект' : lang === 'en' ? 'PRO Cyber Gaming 4-in-1 Bundle' : 'PRO Kiber Gaming 4-in-1 Komplekt', 
+        time: lang === 'ru' ? '5 мин назад' : lang === 'en' ? '5 mins ago' : '5 daqiqa oldin', 
+        icon: '🔥' 
+      }
     ]
     let idx = 0
     const interval = setInterval(() => {
@@ -85,7 +119,7 @@ const LivePurchaseTicker = memo(() => {
       clearInterval(interval)
       clearTimeout(initialTimeout)
     }
-  }, [hideLiveSale])
+  }, [hideLiveSale, lang])
 
   if (!liveSale || hideLiveSale) return null
 
@@ -97,7 +131,7 @@ const LivePurchaseTicker = memo(() => {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-pink-600 dark:text-pink-400">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-          <span>Yangi xarid amalga oshirildi!</span>
+          <span>{lang === 'ru' ? 'Новая покупка совершена!' : lang === 'en' ? 'New purchase completed!' : 'Yangi xarid amalga oshirildi!'}</span>
         </div>
         <p className="text-xs font-bold truncate mt-0.5">
           <span className="text-slate-900 dark:text-white">{liveSale.name}</span> ({liveSale.city}): {liveSale.item}
@@ -107,7 +141,7 @@ const LivePurchaseTicker = memo(() => {
       <button
         onClick={() => setHideLiveSale(true)}
         className="text-slate-400 hover:text-slate-600 p-1 text-xs cursor-pointer ml-1"
-        title="Yopish"
+        title={t('cart_remove', 'Yopish')}
       >
         ✕
       </button>
@@ -121,8 +155,11 @@ const Main = ({
   onAddConsultation,
   theme = 'light',
   activeModalProduct: externalActiveModalProduct,
-  setActiveModalProduct: externalSetActiveModalProduct
+  setActiveModalProduct: externalSetActiveModalProduct,
+  wishlist = [],
+  onToggleWishlist
 }) => {
+  const { t, tc, tp, formatPrice, lang } = useLanguage()
   const [selectedCategory, setSelectedCategory] = useState('Barchasi')
   const [searchQuery, setSearchQuery] = useState('')
   const [catalogSort, setCatalogSort] = useState('default')
@@ -134,6 +171,35 @@ const Main = ({
   const [promoCopied, setPromoCopied] = useState(false)
   const [bundleAdded, setBundleAdded] = useState(false)
 
+  // Advanced Filters State
+  const maxCatalogPrice = useMemo(() => {
+    const highest = Math.max(...products.map((p) => p.priceNum || 0), 2000000)
+    return Math.ceil(highest / 100000) * 100000
+  }, [products])
+
+  const [selectedMaxPrice, setSelectedMaxPrice] = useState(3000000)
+  const [inStockOnly, setInStockOnly] = useState(false)
+  const [discountOnly, setDiscountOnly] = useState(false)
+  const [wishlistOnly, setWishlistOnly] = useState(false)
+  const [viewMode, setViewMode] = useState('grid') // 'grid' | 'list'
+
+  // Product Comparison State
+  const [compareIds, setCompareIds] = useState([])
+  const [isCompareOpen, setIsCompareOpen] = useState(false)
+
+  const toggleCompare = useCallback((id) => {
+    soundFx.playTap()
+    setCompareIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((item) => item !== id)
+      }
+      if (prev.length >= 3) {
+        return [...prev.slice(1), id]
+      }
+      return [...prev, id]
+    })
+  }, [])
+
   const handleCopyPromo = () => {
     navigator.clipboard?.writeText('UPGRADE2026')
     setPromoCopied(true)
@@ -141,10 +207,11 @@ const Main = ({
   }
 
   const handleAddBundleToCart = () => {
+    soundFx.playCartSuccess()
     onAddToCart({
       id: `bundle-promo-4in1`,
-      name: 'PRO Cyber Gaming 4-in-1 Komplekt (Aksiya)',
-      price: "1 390 000 so'm",
+      name: lang === 'ru' ? 'PRO Cyber Gaming 4-в-1 Комплект (Акция)' : lang === 'en' ? 'PRO Cyber Gaming 4-in-1 Bundle (Sale)' : 'PRO Cyber Gaming 4-in-1 Komplekt (Aksiya)',
+      price: formatPrice(1390000),
       priceNum: 1390000,
       image: reklamaBanner,
       category: 'Klaviaturalar',
@@ -156,6 +223,15 @@ const Main = ({
   }
 
   const isDark = theme === 'dark'
+
+  // Interactive 3D Cursor Spotlight Tracking
+  const [heroMousePos, setHeroMousePos] = useState({ x: 50, y: 50 })
+  const handleHeroMouseMove = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setHeroMousePos({ x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) })
+  }, [])
 
   const categories = useMemo(() => [
     { name: 'Barchasi', icon: '⚡' },
@@ -171,13 +247,40 @@ const Main = ({
   const filteredProducts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
     let result = products.filter((p) => {
+      // Category filter
       const matchesCategory = selectedCategory === 'Barchasi' || p.category === selectedCategory
       if (!matchesCategory) return false
-      if (!q) return true
-      return (
-        (p.name && p.name.toLowerCase().includes(q)) ||
-        (p.category && p.category.toLowerCase().includes(q))
-      )
+
+      // Search query filter
+      if (q) {
+        const matchesSearch =
+          (p.name && p.name.toLowerCase().includes(q)) ||
+          (p.category && p.category.toLowerCase().includes(q)) ||
+          (p.specs && p.specs.some((s) => s.toLowerCase().includes(q)))
+        if (!matchesSearch) return false
+      }
+
+      // Price slider filter
+      if (p.priceNum && p.priceNum > selectedMaxPrice) {
+        return false
+      }
+
+      // In stock filter
+      if (inStockOnly && (!p.stock || p.stock <= 0)) {
+        return false
+      }
+
+      // Discount only filter
+      if (discountOnly && !p.oldPrice && p.badge !== 'Chegirma' && !p.badge?.includes('%')) {
+        return false
+      }
+
+      // Wishlist only filter
+      if (wishlistOnly && !wishlist.includes(p.id)) {
+        return false
+      }
+
+      return true
     })
 
     if (catalogSort === 'price-asc') {
@@ -189,7 +292,7 @@ const Main = ({
     }
 
     return result
-  }, [products, selectedCategory, searchQuery, catalogSort])
+  }, [products, selectedCategory, searchQuery, catalogSort, selectedMaxPrice, inStockOnly, discountOnly, wishlistOnly, wishlist])
 
   // Featured products memoized
   const featuredProducts = useMemo(() => {
@@ -216,6 +319,49 @@ const Main = ({
     }
   }
 
+  // Floating Scroll-to-Top Button & Circular Progress State
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight
+      if (total > 0) {
+        const pct = Math.min(100, Math.max(0, (window.scrollY / total) * 100))
+        setScrollProgress(pct)
+      }
+      setShowScrollTop(window.scrollY > 320)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Auto Scroll-Reveal Animation Observer for "tushib chiqayotganda animatsiya"
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+          }
+        })
+      },
+      {
+        threshold: 0.08,
+        rootMargin: '0px 0px -40px 0px'
+      }
+    )
+
+    const revealElements = document.querySelectorAll(
+      '.reveal-on-scroll, .reveal-scale, .reveal-left, .reveal-right'
+    )
+    revealElements.forEach((el) => observer.observe(el))
+
+    return () => {
+      revealElements.forEach((el) => observer.unobserve(el))
+    }
+  }, [selectedCategory, searchQuery, filteredProducts.length])
+
   return (
     <div className={`transition-colors duration-300 relative ${isDark ? 'bg-[#090d16] text-slate-100' : 'bg-white text-slate-900'}`}>
       
@@ -223,23 +369,41 @@ const Main = ({
       <LivePurchaseTicker />
 
       {/* ========================================================= */}
+      {/* 1. PROMO BANNER SWIPER                                    */}
+      {/* ========================================================= */}
+      <div className="pt-2 pb-2">
+        <BannerSwiper onAddToCart={onAddToCart} theme={theme} />
+      </div>
+
+      {/* ========================================================= */}
       {/* 1. HERO SECTION                                           */}
       {/* ========================================================= */}
       <section
+        onMouseMove={handleHeroMouseMove}
         className={`relative overflow-hidden pt-8 pb-16 sm:pt-16 sm:pb-28 border-b transition-colors duration-300 ${
           isDark
             ? 'bg-gradient-to-b from-[#0f172a] via-[#090d16] to-[#090d16] border-slate-800/80'
             : 'bg-aurora-mesh border-slate-100'
         }`}
       >
+        {/* Interactive Ambient Cursor Spotlight Glow */}
+        <div
+          className="absolute inset-0 pointer-events-none -z-10 transition-opacity duration-300 opacity-60 dark:opacity-85"
+          style={{
+            background: `radial-gradient(750px circle at ${heroMousePos.x}% ${heroMousePos.y}%, rgba(236, 72, 153, 0.16), rgba(168, 85, 247, 0.08) 45%, transparent 75%)`
+          }}
+        />
+
         {/* Floating Neon Lights */}
         <div className="absolute top-10 left-1/4 w-[500px] h-[300px] bg-pink-500/15 dark:bg-pink-600/20 rounded-full blur-[130px] pointer-events-none -z-10 animate-float-gentle" />
         <div className="absolute top-28 right-10 w-[450px] h-[350px] bg-purple-500/15 dark:bg-purple-600/20 rounded-full blur-[140px] pointer-events-none -z-10 animate-float-reverse" />
+        {/* 3D Animated Cyber Horizon Grid */}
+        <div className="absolute -bottom-10 left-0 right-0 h-44 cyber-grid-3d pointer-events-none -z-10" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Column: Heading & CTAs */}
-            <div className="lg:col-span-7 text-center lg:text-left">
+            <div className="lg:col-span-6 xl:col-span-6 text-center lg:text-left">
               <div
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-extrabold mb-6 shadow-sm border transition-transform hover:scale-105 ${
                   isDark
@@ -264,11 +428,30 @@ const Main = ({
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               >
-                Kompyuteringiz Uchun Eng Kuchli Aksessuarlar Bilan{' '}
-                <span className="text-gradient-animated inline-block transform hover:scale-105 transition-transform cursor-pointer">
-                  UPGRADE
-                </span>{' '}
-                Qiling
+                {lang === 'ru' ? (
+                  <>
+                    Сделайте{' '}
+                    <span className="text-gradient-animated inline-block transform hover:scale-105 transition-transform cursor-pointer">
+                      UPGRADE
+                    </span>{' '}
+                    своего ПК мощнейшими аксессуарами
+                  </>
+                ) : lang === 'en' ? (
+                  <>
+                    <span className="text-gradient-animated inline-block transform hover:scale-105 transition-transform cursor-pointer">
+                      UPGRADE
+                    </span>{' '}
+                    Your Setup With Ultimate PC Accessories
+                  </>
+                ) : (
+                  <>
+                    Kompyuteringiz Uchun Eng Kuchli Aksessuarlar Bilan{' '}
+                    <span className="text-gradient-animated inline-block transform hover:scale-105 transition-transform cursor-pointer">
+                      UPGRADE
+                    </span>{' '}
+                    Qiling
+                  </>
+                )}
               </h1>
 
               <p
@@ -276,15 +459,32 @@ const Main = ({
                   isDark ? 'text-slate-300' : 'text-slate-600'
                 }`}
               >
-                Yuqori sezuvchan mexanik klaviaturalar, ultra-yengil kiber sport sichqonchalari, 7.1 fazoviy naushniklar va professional ish stoli aksessuarlari. Butun O'zbekiston bo'yicha 24 soatda tezkor yetkazib berish va 2 yil rasmiy kafolat.
+                {lang === 'ru' 
+                  ? 'Высокочувствительные механические клавиатуры, ультралегкие киберспортивные мыши, наушники с пространственным звуком 7.1 и аксессуары для стола. Быстрая доставка за 24 часа по всему Узбекистану и 2 года гарантии.'
+                  : lang === 'en'
+                  ? 'High-precision mechanical keyboards, ultralight esports mice, 7.1 spatial audio headsets, and desk accessories. Fast 24-hour delivery across Uzbekistan with a 2-year warranty.'
+                  : "Yuqori sezuvchan mexanik klaviaturalar, ultra-yengil kiber sport sichqonchalari, 7.1 fazoviy naushniklar va professional ish stoli aksessuarlari. Butun O'zbekiston bo'yicha 24 soatda tezkor yetkazib berish va 2 yil rasmiy kafolat."}
               </p>
+
+              {/* 3D Floating Cyber Chips */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 my-6">
+                <div className="px-3.5 py-1.5 rounded-xl border border-pink-500/30 bg-pink-500/10 backdrop-blur-md text-[11px] font-extrabold text-pink-500 dark:text-pink-400 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-transform animate-float-gentle cursor-default">
+                  <span>⚡</span> 8000Hz Polling Rate
+                </div>
+                <div className="px-3.5 py-1.5 rounded-xl border border-purple-500/30 bg-purple-500/10 backdrop-blur-md text-[11px] font-extrabold text-purple-600 dark:text-purple-400 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-transform animate-float-reverse cursor-default">
+                  <span>🎧</span> 7.1 Spatial Audio 3D
+                </div>
+                <div className="px-3.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 shadow-sm hover:scale-105 transition-transform animate-float-gentle cursor-default">
+                  <span>🎮</span> 0.1ms Ultra Latency
+                </div>
+              </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <a
                   href="#catalog"
                   className="w-full sm:w-auto btn-pink btn-vauu-shine px-8 py-4 rounded-2xl text-base font-black shadow-xl shadow-pink-500/30 flex items-center justify-center gap-2.5 group cursor-pointer"
                 >
-                  <span>🛒 Aksessuarlar Katalogi</span>
+                  <span>🛒 {lang === 'ru' ? 'Каталог аксессуаров' : lang === 'en' ? 'Accessories Catalog' : 'Aksessuarlar Katalogi'}</span>
                   <svg className="w-5 h-5 transition-transform group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
@@ -298,28 +498,44 @@ const Main = ({
                   }`}
                 >
                   <span className="text-pink-500">⚡</span>
-                  <span>4-in-1 Super Aksiya (-35%)</span>
+                  <span>{lang === 'ru' ? '4-в-1 Супер Акция (-35%)' : lang === 'en' ? '4-in-1 Super Deal (-35%)' : '4-in-1 Super Aksiya (-35%)'}</span>
                 </a>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="pt-10 mt-8 border-t border-slate-200/60 dark:border-slate-800/80 max-w-xl mx-auto lg:mx-0 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                <div className="grid grid-cols-3 gap-6 text-left">
-                  <div>
-                    <div className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>50,000+</div>
-                    <div className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Mamnun mijoz</div>
+              {/* Trust Indicators with 3D Cyber Stat Cards */}
+              <div className="pt-8 mt-6 border-t border-slate-200/60 dark:border-slate-800/80 max-w-xl mx-auto lg:mx-0 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                <div className="grid grid-cols-3 gap-2.5 sm:gap-3 text-left w-full sm:w-auto">
+                  <div className={`p-3 rounded-2xl border backdrop-blur-md transition-all hover:scale-105 hover:-translate-y-1 ${
+                    isDark ? 'bg-slate-900/70 border-slate-800 shadow-xs hover:border-pink-500/40' : 'bg-white/80 border-slate-200/80 shadow-xs hover:border-pink-300'
+                  }`}>
+                    <div className={`text-lg sm:text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>50,000+</div>
+                    <div className={`text-[10px] font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                      {lang === 'ru' ? 'Клиентов' : lang === 'en' ? 'Customers' : 'Mamnun mijoz'}
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-2xl font-black text-pink-600 dark:text-pink-400">2 YIL</div>
-                    <div className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>To'liq kafolat</div>
+                  <div className={`p-3 rounded-2xl border backdrop-blur-md transition-all hover:scale-105 hover:-translate-y-1 ${
+                    isDark ? 'bg-pink-950/30 border-pink-500/30 shadow-xs hover:border-pink-500/60' : 'bg-pink-50/70 border-pink-200 shadow-xs hover:border-pink-400'
+                  }`}>
+                    <div className="text-lg sm:text-xl font-black text-pink-600 dark:text-pink-400">
+                      {lang === 'ru' ? '2 ГОДА' : lang === 'en' ? '2 YEARS' : '2 YIL'}
+                    </div>
+                    <div className={`text-[10px] font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                      {lang === 'ru' ? 'Гарантия' : lang === 'en' ? 'Warranty' : "To'liq kafolat"}
+                    </div>
                   </div>
-                  <div>
-                    <div className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>24 SOAT</div>
-                    <div className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Tez yetkazish</div>
+                  <div className={`p-3 rounded-2xl border backdrop-blur-md transition-all hover:scale-105 hover:-translate-y-1 ${
+                    isDark ? 'bg-slate-900/70 border-slate-800 shadow-xs hover:border-purple-500/40' : 'bg-white/80 border-slate-200/80 shadow-xs hover:border-purple-300'
+                  }`}>
+                    <div className={`text-lg sm:text-xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      {lang === 'ru' ? '24 ЧАСА' : lang === 'en' ? '24 HOURS' : '24 SOAT'}
+                    </div>
+                    <div className={`text-[10px] font-bold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                      {lang === 'ru' ? 'Доставка' : lang === 'en' ? 'Delivery' : 'Tez yetkazish'}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 pl-0 sm:pl-4 sm:border-l border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-3 pl-0 sm:pl-3 sm:border-l border-slate-200 dark:border-slate-800 shrink-0">
                   <div className="flex -space-x-2.5 overflow-hidden">
                     <img loading="lazy" decoding="async" className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Customer" />
                     <img loading="lazy" decoding="async" className="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" alt="Customer" />
@@ -329,50 +545,69 @@ const Main = ({
                     <div className="flex items-center text-amber-400 text-xs font-bold">
                       ★★★★★ <span className="ml-1 text-slate-800 dark:text-slate-200">4.9/5</span>
                     </div>
-                    <span className="text-[11px] text-slate-400">10,000+ fikr</span>
+                    <span className="text-[11px] text-slate-400">
+                      {lang === 'ru' ? '10 000+ отзывов' : lang === 'en' ? '10,000+ reviews' : '10,000+ fikr'}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Right Column: 3D Showcase Video with Preload Optimization */}
-            <div className="lg:col-span-5 relative flex items-center justify-center">
+            <div className="lg:col-span-6 xl:col-span-6 relative flex items-center justify-center w-full">
               <div
-                className={`absolute w-80 h-80 rounded-full -z-10 blur-3xl ${
-                  isDark ? 'bg-pink-600/25' : 'bg-pink-300/40'
+                className={`absolute w-96 h-96 sm:w-[520px] sm:h-[520px] rounded-full -z-10 blur-3xl ${
+                  isDark ? 'bg-pink-600/30' : 'bg-pink-300/40'
                 }`}
               />
 
-              <div
-                className={`relative w-full max-w-md backdrop-blur-xl rounded-3xl p-6 sm:p-7 border shadow-2xl text-center cyber-card ${
+              {/* 3D Gyroscope Neon Orbit Rings */}
+              <div className="absolute -inset-4 sm:-inset-8 border border-pink-500/20 rounded-full animate-orbit-3d pointer-events-none -z-10" />
+              <div className="absolute -inset-8 sm:-inset-14 border border-purple-500/20 rounded-full animate-orbit-3d-reverse pointer-events-none -z-10" />
+
+              <TiltCard3D
+                maxTilt={14}
+                scale={1.03}
+                glare={true}
+                className={`relative w-full max-w-lg lg:max-w-xl xl:max-w-2xl backdrop-blur-xl rounded-3xl p-5 sm:p-7 border shadow-2xl text-center cyber-card ${
                   isDark
                     ? 'bg-[#111827]/90 border-slate-700/80 shadow-black/70'
                     : 'bg-white/90 border-slate-200 shadow-pink-500/10'
                 }`}
               >
-                <div className="flex items-center justify-between text-xs pb-3 mb-2 border-b border-slate-100 dark:border-slate-800">
-                  <span className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Jonli namoyish
+                <div className="flex items-center justify-between text-xs pb-3 mb-2 border-b border-slate-100 dark:border-slate-800" style={{ transform: 'translateZ(30px)' }}>
+                  <span className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-300">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>{lang === 'ru' ? 'Прямая демонстрация' : lang === 'en' ? 'Live Showcase' : 'Jonli namoyish'}</span>
+                    {/* Animated Cyber Audio Visualizer */}
+                    <span className="flex items-end gap-0.5 h-3 ml-0.5">
+                      <span className="w-0.5 bg-emerald-500 rounded-full animate-bounce h-2" style={{ animationDuration: '0.6s' }} />
+                      <span className="w-0.5 bg-emerald-400 rounded-full animate-bounce h-3" style={{ animationDuration: '0.9s' }} />
+                      <span className="w-0.5 bg-emerald-500 rounded-full animate-bounce h-1.5" style={{ animationDuration: '0.7s' }} />
+                      <span className="w-0.5 bg-emerald-400 rounded-full animate-bounce h-2.5" style={{ animationDuration: '0.8s' }} />
+                    </span>
                   </span>
-                  <span className="text-[11px] font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/60 px-2 py-0.5 rounded-full">
-                    ⚡ 43 kishi ko'rmoqda
+                  <span className="text-[11px] font-black text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/70 border border-pink-500/20 px-2.5 py-0.5 rounded-full shadow-xs">
+                    ⚡ {lang === 'ru' ? '43 человека смотрят' : lang === 'en' ? '43 people watching' : "43 kishi ko'rmoqda"}
                   </span>
                 </div>
 
                 {/* Modern UPGRADE Cyber Showcase Video with Ultra-HD Rig & Brand Identity */}
-                <div className="relative my-2 overflow-hidden rounded-2xl shadow-2xl border-2 border-pink-500/40 bg-slate-950 group">
+                <div 
+                  className="relative my-2 overflow-hidden rounded-2xl shadow-2xl border-2 border-pink-500/40 bg-slate-950 group"
+                  style={{ transform: 'translateZ(25px)' }}
+                >
                   <video
+                    key={upgradeVideo}
                     autoPlay
                     loop
                     muted
                     playsInline
                     preload="auto"
                     poster={heroPoster}
-                    className="w-full h-auto aspect-video object-cover rounded-2xl group-hover:scale-108 transition-transform duration-700"
+                    className="w-full h-auto aspect-video object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700"
                   >
-                    <source src={upgradeVideo} type="video/webm" />
-                    <source src={heroVideo} type="video/mp4" />
+                    <source src={upgradeVideo} type="video/mp4" />
                   </video>
                   
                   {/* Subtle glassmorphic cyber overlay */}
@@ -380,24 +615,31 @@ const Main = ({
                   <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-pink-500/20 pointer-events-none" />
                   
                   {/* Glowing UPGRADE Badge Overlay */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-2 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-pink-500/50 shadow-lg shadow-pink-500/25">
+                  <div 
+                    className="absolute top-2.5 left-2.5 flex items-center gap-2 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-pink-500/50 shadow-lg shadow-pink-500/25"
+                    style={{ transform: 'translateZ(45px)' }}
+                  >
                     <img src={logoImg} alt="UPGRADE" className="h-4 w-auto object-contain filter drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                   </div>
 
                   {/* 4K Ultra HD Badge */}
-                  <span className="absolute bottom-2.5 right-2.5 bg-black/80 backdrop-blur-md text-[10px] text-pink-300 font-black px-2.5 py-1 rounded-lg font-mono border border-pink-500/40 shadow-md flex items-center gap-1">
+                  <span 
+                    className="absolute bottom-2.5 right-2.5 bg-black/80 backdrop-blur-md text-[10px] text-pink-300 font-black px-2.5 py-1 rounded-lg font-mono border border-pink-500/40 shadow-md flex items-center gap-1"
+                    style={{ transform: 'translateZ(40px)' }}
+                  >
                     <span className="text-amber-400">✦</span> 4K ULTRA HD
                   </span>
                 </div>
 
-                {/* Floating Widgets */}
+                {/* Floating 3D Widgets with Z-depth */}
                 <div
                   className={`absolute -top-5 -left-4 sm:-left-6 px-4 py-2.5 rounded-2xl border shadow-xl flex items-center gap-2.5 text-xs font-bold animate-float-gentle z-20 ${
                     isDark
                       ? 'bg-slate-900/95 border-pink-500/40 text-white shadow-pink-950/40 backdrop-blur-md'
                       : 'bg-white/95 border-pink-200 text-slate-800 shadow-slate-300 backdrop-blur-md'
                   }`}
+                  style={{ transform: 'translateZ(65px)' }}
                 >
                   <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-base shrink-0 ${
                     isDark ? 'bg-pink-950 text-pink-400' : 'bg-pink-100 text-pink-600'
@@ -405,7 +647,9 @@ const Main = ({
                     ⌨️
                   </span>
                   <div className="text-left">
-                    <div className="text-[10px] text-slate-400 font-normal">Switch turi</div>
+                    <div className="text-[10px] text-slate-400 font-normal">
+                      {lang === 'ru' ? 'Тип переключателя' : lang === 'en' ? 'Switch type' : 'Switch turi'}
+                    </div>
                     <div className="text-pink-600 font-black">Hot-Swap Red</div>
                   </div>
                 </div>
@@ -416,6 +660,7 @@ const Main = ({
                       ? 'bg-slate-900/95 border-pink-500/40 text-white shadow-pink-950/40 backdrop-blur-md'
                       : 'bg-white/95 border-pink-200 text-slate-800 shadow-slate-300 backdrop-blur-md'
                   }`}
+                  style={{ transform: 'translateZ(65px)' }}
                 >
                   <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-base shrink-0 ${
                     isDark ? 'bg-pink-950 text-pink-400' : 'bg-pink-100 text-pink-600'
@@ -423,7 +668,9 @@ const Main = ({
                     ⚡
                   </span>
                   <div className="text-left">
-                    <div className="text-[10px] text-slate-400 font-normal">Sezuvchanlik</div>
+                    <div className="text-[10px] text-slate-400 font-normal">
+                      {lang === 'ru' ? 'Чувствительность' : lang === 'en' ? 'Sensitivity' : 'Sezuvchanlik'}
+                    </div>
                     <div className="text-pink-600 font-black">26000 DPI • 1ms</div>
                   </div>
                 </div>
@@ -435,28 +682,32 @@ const Main = ({
                 >
                   <span className="flex items-center gap-1.5 font-bold">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span className="text-emerald-600 dark:text-emerald-400">100% Original Sifat</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">
+                      {lang === 'ru' ? '100% Оригинальное качество' : lang === 'en' ? '100% Genuine Quality' : '100% Original Sifat'}
+                    </span>
                   </span>
-                  <span className="font-extrabold text-pink-600 dark:text-pink-400">2 Yillik Kafolat</span>
+                  <span className="font-extrabold text-pink-600 dark:text-pink-400">
+                    {lang === 'ru' ? '2 года гарантии' : lang === 'en' ? '2-Year Warranty' : '2 Yillik Kafolat'}
+                  </span>
                 </div>
-              </div>
+              </TiltCard3D>
             </div>
           </div>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 1.5. INTERACTIVE HERO PROMO SWIPER BANNER                 */}
+      {/* 2. INTERACTIVE MECHANICAL SWITCH SOUND TESTER             */}
       {/* ========================================================= */}
-      <div className="pt-3 pb-6">
-        <BannerSwiper onAddToCart={onAddToCart} />
+      <div className="reveal-on-scroll">
+        <SwitchSoundTester theme={theme} />
       </div>
 
       {/* ========================================================= */}
-      {/* 2. PRODUCT SLIDER — FEATURED & POPULAR                    */}
+      {/* 4. PRODUCT SLIDER — FEATURED & POPULAR                    */}
       {/* ========================================================= */}
       <div
-        className={`border-y transition-colors duration-300 ${
+        className={`border-y transition-colors duration-300 reveal-on-scroll ${
           isDark
             ? 'bg-[#0b0f19] border-slate-800'
             : 'bg-gradient-to-b from-pink-50/40 via-white to-pink-50/20 border-pink-100/60'
@@ -466,26 +717,37 @@ const Main = ({
           products={featuredProducts}
           onAddToCart={onAddToCart}
           onOpenProduct={setActiveModalProduct}
-          title="Ommabop & Trend Mahsulotlar"
+          title={lang === 'ru' ? 'Популярные и трендовые товары' : lang === 'en' ? 'Popular & Trending Products' : 'Ommabop & Trend Mahsulotlar'}
           icon="🔥"
           theme={theme}
         />
       </div>
 
       {/* ========================================================= */}
+      {/* 5. INTERACTIVE CYBER SETUP BUILDER                        */}
+      {/* ========================================================= */}
+      <div className="reveal-on-scroll">
+        <SetupBuilder onAddToCart={onAddToCart} theme={theme} />
+      </div>
+
+      {/* ========================================================= */}
       {/* 3. CATEGORY FILTERS & SEARCH BAR                          */}
       {/* ========================================================= */}
-      <section id="catalog" className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="catalog" className="pt-16 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto reveal-on-scroll">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-50 dark:bg-pink-950/60 border border-pink-200 dark:border-pink-800/60 text-xs font-black uppercase tracking-widest text-pink-600 dark:text-pink-400 mb-2.5">
-              <span>✨</span> BIZNING TO'PLAM
+              <span>✨</span> {lang === 'ru' ? 'НАША КОЛЛЕКЦИЯ' : lang === 'en' ? 'OUR COLLECTION' : "BIZNING TO'PLAM"}
             </div>
             <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Kompyuter Aksessuarlari Katalogi
+              {lang === 'ru' ? 'Каталог компьютерных аксессуаров' : lang === 'en' ? 'PC Accessories Catalog' : 'Kompyuter Aksessuarlari Katalogi'}
             </h2>
             <p className={`text-sm sm:text-base mt-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Setupingizni yangilash uchun eng sara, yuqori sifatli va sinovdan o'tgan uskunalar
+              {lang === 'ru' 
+                ? 'Лучшие и проверенные устройства для апгрейда вашего сетапа' 
+                : lang === 'en' 
+                ? 'Top-tier, high-quality, and tested gear to upgrade your setup' 
+                : "Setupingizni yangilash uchun eng sara, yuqori sifatli va sinovdan o'tgan uskunalar"}
             </p>
           </div>
 
@@ -494,7 +756,7 @@ const Main = ({
             <div className="relative w-full sm:w-80 group">
               <input
                 type="text"
-                placeholder="Aksessuar nomi yoki brendi..."
+                placeholder={t('search_placeholder', 'Aksessuar nomi yoki brendi...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`w-full pl-10 pr-9 py-3 rounded-2xl border text-sm transition-all focus:outline-hidden ${
@@ -511,7 +773,7 @@ const Main = ({
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-3 text-xs text-slate-400 hover:text-pink-500 font-bold p-1 cursor-pointer"
-                  title="Tozalash"
+                  title={lang === 'ru' ? 'Очистить' : lang === 'en' ? 'Clear' : 'Tozalash'}
                 >
                   ✕
                 </button>
@@ -528,21 +790,24 @@ const Main = ({
                   : 'bg-white border-slate-200 text-slate-700 focus:border-pink-500 shadow-xs'
               }`}
             >
-              <option value="default">📊 Saralash: Odatiy</option>
-              <option value="price-asc">💵 Narx: Arzondan qimmatga</option>
-              <option value="price-desc">💎 Narx: Qimmatdan arzonga</option>
-              <option value="rating">⭐ Reyting: Eng yuqori</option>
+              <option value="default">📊 {t('sort_default', 'Saralash: Odatiy')}</option>
+              <option value="price-asc">💵 {t('sort_price_asc', 'Narx: Arzondan qimmatga')}</option>
+              <option value="price-desc">💎 {t('sort_price_desc', 'Narx: Qimmatdan arzonga')}</option>
+              <option value="rating">⭐ {t('sort_rating', 'Reyting: Eng yuqori')}</option>
             </select>
           </div>
         </div>
 
         {/* Results Counter & Category Pills with Icons */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div className="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar scroll-smooth select-none">
             {categories.map((cat) => (
               <button
                 key={cat.name}
-                onClick={() => setSelectedCategory(cat.name)}
+                onClick={() => {
+                  setSelectedCategory(cat.name)
+                  soundFx.playTap()
+                }}
                 className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95 ${
                   selectedCategory === cat.name
                     ? 'btn-pink shadow-lg shadow-pink-500/25 scale-[1.03]'
@@ -552,19 +817,145 @@ const Main = ({
                 }`}
               >
                 <span>{cat.icon}</span>
-                <span>{cat.name}</span>
+                <span>{tc(cat.name)}</span>
               </button>
             ))}
           </div>
 
           <div className="text-xs font-bold text-slate-500 shrink-0">
-            Topildi: <span className="text-pink-600 dark:text-pink-400 font-extrabold">{filteredProducts.length} ta aksessuar</span>
+            {lang === 'ru' 
+              ? `Найдено: ` 
+              : lang === 'en' 
+              ? `Found: ` 
+              : `Topildi: `}
+            <span className="text-pink-600 dark:text-pink-400 font-extrabold">
+              {filteredProducts.length} {lang === 'ru' ? 'аксессуаров' : lang === 'en' ? 'items' : 'ta aksessuar'}
+            </span>
+          </div>
+        </div>
+
+        {/* ── Advanced Cyber Filters Toolbar ── */}
+        <div className={`p-4 sm:p-5 rounded-3xl border mb-6 transition-all ${
+          isDark ? 'bg-slate-900/60 border-slate-800 shadow-xl' : 'bg-slate-50/90 border-slate-200/90 shadow-sm'
+        }`}>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            {/* Left: Quick Filter Toggles */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* In Stock toggle */}
+              <button
+                onClick={() => {
+                  setInStockOnly(!inStockOnly)
+                  soundFx.playTap()
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                  inStockOnly
+                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                    : isDark ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-700 border-slate-200'
+                }`}
+              >
+                <span>📦</span>
+                <span>{lang === 'ru' ? 'В наличии' : lang === 'en' ? 'In Stock' : 'Omborda bor'}</span>
+              </button>
+
+              {/* Discount only toggle */}
+              <button
+                onClick={() => {
+                  setDiscountOnly(!discountOnly)
+                  soundFx.playTap()
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                  discountOnly
+                    ? 'bg-rose-600 text-white border-rose-500 shadow-sm'
+                    : isDark ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-700 border-slate-200'
+                }`}
+              >
+                <span>🔥</span>
+                <span>{lang === 'ru' ? 'Только со скидкой' : lang === 'en' ? 'Discounts Only' : 'Faqat chegirmalar'}</span>
+              </button>
+
+              {/* Wishlist only toggle */}
+              <button
+                onClick={() => {
+                  setWishlistOnly(!wishlistOnly)
+                  soundFx.playTap()
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                  wishlistOnly
+                    ? 'bg-pink-600 text-white border-pink-600 shadow-sm'
+                    : isDark ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-white text-slate-700 border-slate-200'
+                }`}
+              >
+                <span>❤️</span>
+                <span>{lang === 'ru' ? 'Избранные' : lang === 'en' ? 'Wishlist' : 'Sevimlilar'} ({wishlist.length})</span>
+              </button>
+
+              {/* Compare Modal Button */}
+              {compareIds.length > 0 && (
+                <button
+                  onClick={() => setIsCompareOpen(true)}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white border border-purple-500 shadow-sm transition-all cursor-pointer flex items-center gap-1.5 animate-pulse"
+                >
+                  <span>⚖️</span>
+                  <span>{lang === 'ru' ? 'Сравнить' : lang === 'en' ? 'Compare' : 'Taqqoslash'} ({compareIds.length})</span>
+                </button>
+              )}
+            </div>
+
+            {/* Right: Price Range Slider & View Mode */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              {/* Price Slider */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-slate-400 whitespace-nowrap">
+                  {lang === 'ru' ? 'Макс. цена:' : lang === 'en' ? 'Max Price:' : 'Maks. narx:'}
+                </span>
+                <input
+                  type="range"
+                  min="100000"
+                  max={maxCatalogPrice}
+                  step="50000"
+                  value={selectedMaxPrice}
+                  onChange={(e) => setSelectedMaxPrice(Number(e.target.value))}
+                  className="cyber-slider w-28 sm:w-36"
+                />
+                <span className="text-xs font-black text-pink-500 font-mono whitespace-nowrap min-w-[90px]">
+                  {formatPrice(selectedMaxPrice)}
+                </span>
+              </div>
+
+              {/* View Mode Toggle (Grid vs List) */}
+              <div className={`flex items-center p-1 rounded-xl border ${
+                isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-200/60 border-slate-200'
+              }`}>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === 'grid'
+                      ? 'bg-pink-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Grid ko'rinishi"
+                >
+                  ⊞ Grid
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === 'list'
+                      ? 'bg-pink-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="List ko'rinishi"
+                >
+                  ☰ List
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 3. PRODUCT CARDS GRID                                     */}
+      {/* 3. PRODUCT CARDS GRID OR LIST                             */}
       {/* ========================================================= */}
       <section className="pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {filteredProducts.length === 0 ? (
@@ -575,29 +966,164 @@ const Main = ({
           >
             <div className="text-5xl mb-3 animate-bounce">🔍</div>
             <h3 className={`text-xl font-black ${isDark ? 'text-white' : 'text-slate-800'}`}>
-              Hech qanday aksessuar topilmadi
+              {t('search_no_results', 'Hech qanday aksessuar topilmadi')}
             </h3>
             <p className="text-sm text-slate-500 mt-1 mb-5">
-              Qidiruv so'zini o'zgartiring yoki boshqa toifani tanlang.
+              {lang === 'ru' 
+                ? 'Измените поисковый запрос или сбросьте фильтры.' 
+                : lang === 'en' 
+                ? 'Try changing your search query or reset the filters.' 
+                : "Qidiruv so'zini o'zgartiring yoki filtrlarni tozalang."}
             </p>
             <button
               onClick={() => {
                 setSelectedCategory('Barchasi')
                 setSearchQuery('')
+                setSelectedMaxPrice(maxCatalogPrice)
+                setInStockOnly(false)
+                setDiscountOnly(false)
+                setWishlistOnly(false)
               }}
               className="btn-pink px-6 py-2.5 rounded-2xl text-xs font-bold cursor-pointer shadow-md"
             >
-              Barcha mahsulotlarni ko'rsatish
+              {lang === 'ru' ? 'Сбросить все фильтры' : lang === 'en' ? 'Reset all filters' : "Filtrlarni tozalash"}
             </button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => {
-              const isLowStock = (product.stock || 10) <= 5
+        ) : viewMode === 'list' ? (
+          /* LIST VIEW MODE */
+          <div className="space-y-4">
+            {filteredProducts.map((rawProduct) => {
+              const product = tp(rawProduct)
+              const isWishlisted = wishlist.includes(rawProduct.id)
+              const isCompared = compareIds.includes(rawProduct.id)
 
               return (
                 <div
                   key={product.id}
+                  className={`p-4 sm:p-5 rounded-3xl border transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 ${
+                    isDark
+                      ? 'bg-[#111827]/90 border-slate-800 hover:border-pink-500/60 shadow-lg'
+                      : 'bg-white border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-xl'
+                  }`}
+                >
+                  <div
+                    className="relative w-full sm:w-48 aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shrink-0 bg-slate-900/10"
+                    onClick={() => setActiveModalProduct(product)}
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                    <span className="absolute top-2 left-2 bg-pink-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-md">
+                      {product.badge}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-0 w-full">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                        isDark ? 'bg-pink-950/70 text-pink-400' : 'bg-pink-50 text-pink-600'
+                      }`}>
+                        {tc(product.category)}
+                      </span>
+                      <span className="text-amber-400 text-xs font-bold">★ {product.rating}</span>
+                      <span className="text-slate-400 text-xs">({product.reviewsCount})</span>
+                    </div>
+
+                    <h3
+                      onClick={() => setActiveModalProduct(product)}
+                      className={`font-black text-base line-clamp-1 cursor-pointer transition-colors ${
+                        isDark ? 'text-white hover:text-pink-400' : 'text-slate-900 hover:text-pink-600'
+                      }`}
+                    >
+                      {product.name}
+                    </h3>
+
+                    <p className={`text-xs mt-1 line-clamp-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      {product.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {(product.specs || []).map((spec, sIdx) => (
+                        <span key={sIdx} className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions & Price */}
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto shrink-0 gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-slate-800">
+                    <div className="text-left sm:text-right">
+                      <div className="text-lg font-black text-pink-500 font-heading whitespace-nowrap">
+                        {product.price}
+                      </div>
+                      {product.oldPrice && (
+                        <div className="text-xs text-slate-400 line-through whitespace-nowrap">
+                          {product.oldPrice}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          if (onToggleWishlist) onToggleWishlist(rawProduct.id)
+                          soundFx.playTap()
+                        }}
+                        className={`p-2 rounded-xl border text-sm transition-all cursor-pointer ${
+                          isWishlisted
+                            ? 'bg-rose-500 text-white border-rose-500'
+                            : isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-slate-100 text-slate-500 border-slate-200'
+                        }`}
+                        title="Sevimlilar"
+                      >
+                        {isWishlisted ? '❤️' : '🤍'}
+                      </button>
+
+                      <button
+                        onClick={() => toggleCompare(rawProduct.id)}
+                        className={`p-2 rounded-xl border text-sm transition-all cursor-pointer ${
+                          isCompared
+                            ? 'bg-purple-600 text-white border-purple-500'
+                            : isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-slate-100 text-slate-500 border-slate-200'
+                        }`}
+                        title="Taqqoslash"
+                      >
+                        ⚖️
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          soundFx.playCartSuccess()
+                          onAddToCart(product)
+                        }}
+                        className="btn-pink px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md"
+                      >
+                        <span>🛒</span>
+                        <span>{t('addToCart', "Savatga")}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          /* GRID VIEW MODE */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((rawProduct) => {
+              const product = tp(rawProduct)
+              const isWishlisted = wishlist.includes(rawProduct.id)
+              const isCompared = compareIds.includes(rawProduct.id)
+
+              return (
+                <TiltCard3D
+                  key={product.id}
+                  maxTilt={9}
+                  scale={1.02}
+                  glare={true}
                   className={`rounded-3xl border overflow-hidden flex flex-col justify-between group transition-all duration-300 cyber-card ${
                     isDark
                       ? 'bg-[#111827]/90 border-slate-800 hover:border-pink-500/60 shadow-lg shadow-black/30'
@@ -609,13 +1135,13 @@ const Main = ({
                     className={`relative aspect-[4/3] overflow-hidden cursor-pointer ${
                       isDark ? 'bg-slate-900/80' : 'bg-slate-50'
                     }`}
-                    onClick={() => setActiveModalProduct(product)}
                   >
                     <img
                       loading="lazy"
                       decoding="async"
                       src={product.image}
                       alt={product.name}
+                      onClick={() => setActiveModalProduct(product)}
                       className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
                       onError={(e) => {
                         e.target.onerror = null
@@ -623,25 +1149,50 @@ const Main = ({
                       }}
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
                     <span className="absolute top-3 left-3 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
-                      {product.badge}
+                      {product.badge === 'Chegirma' ? (lang === 'ru' ? 'Скидка' : lang === 'en' ? 'Sale' : 'Chegirma') : product.badge}
                     </span>
 
-                    <span
-                      className={`absolute bottom-3 left-3 backdrop-blur-md text-[10px] font-extrabold px-2.5 py-1 rounded-xl shadow-md border ${
-                        isLowStock
-                          ? 'bg-rose-500/90 text-white border-rose-400 animate-pulse'
-                          : isDark
-                          ? 'bg-slate-900/90 text-slate-200 border-white/10'
-                          : 'bg-white/95 text-slate-800 border-slate-200'
-                      }`}
+                    {/* Quick Floating Action Icons: Wishlist & Compare */}
+                    <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-20">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (onToggleWishlist) onToggleWishlist(rawProduct.id)
+                          soundFx.playTap()
+                        }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs backdrop-blur-md transition-all shadow-md cursor-pointer ${
+                          isWishlisted
+                            ? 'bg-rose-500 text-white scale-110 shadow-rose-500/40'
+                            : 'bg-black/50 hover:bg-black/80 text-white'
+                        }`}
+                        title="Sevimlilar"
+                      >
+                        {isWishlisted ? '❤️' : '🤍'}
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleCompare(rawProduct.id)
+                        }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs backdrop-blur-md transition-all shadow-md cursor-pointer ${
+                          isCompared
+                            ? 'bg-purple-600 text-white scale-110 shadow-purple-500/40'
+                            : 'bg-black/50 hover:bg-black/80 text-white'
+                        }`}
+                        title="Taqqoslash"
+                      >
+                        ⚖️
+                      </button>
+                    </div>
+
+                    <div
+                      onClick={() => setActiveModalProduct(product)}
+                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     >
-                      {isLowStock ? `🔥 Faqat ${product.stock} dona qoldi!` : `Omborda: ${product.stock || 10} dona`}
-                    </span>
-
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                       <span
                         className={`text-xs font-black px-4 py-2 rounded-2xl shadow-xl transform group-hover:scale-105 transition-all ${
                           isDark
@@ -649,7 +1200,7 @@ const Main = ({
                             : 'bg-white/95 text-slate-900 border border-pink-200'
                         }`}
                       >
-                        👁️ Tezkor Ko'rish
+                        👁️ {lang === 'ru' ? 'Быстрый просмотр' : lang === 'en' ? 'Quick View' : "Tezkor Ko'rish"}
                       </span>
                     </div>
                   </div>
@@ -663,7 +1214,7 @@ const Main = ({
                             isDark ? 'bg-pink-950/70 text-pink-400 border border-pink-800/40' : 'bg-pink-50 text-pink-600 border border-pink-100'
                           }`}
                         >
-                          {product.category}
+                          {tc(product.category)}
                         </span>
                         <div className="flex items-center gap-1 text-amber-400 font-black">
                           <span>★</span>
@@ -696,37 +1247,49 @@ const Main = ({
                       </ul>
                     </div>
 
-                    <div className={`pt-3.5 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
-                      <div className="flex items-baseline justify-between mb-3">
-                        <div className="flex items-baseline gap-2">
-                          <span className={`text-lg font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                            {product.price}
-                          </span>
-                          {product.oldPrice && (
-                            <span className="text-xs text-slate-400 line-through">
+                    <div className={`pt-3 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                      <div className="mb-3">
+                        {product.oldPrice && (
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-medium whitespace-nowrap">
                               {product.oldPrice}
                             </span>
-                          )}
-                        </div>
-                        {product.oldPrice && (
-                          <span className="text-[10px] font-black text-rose-600 bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded-md">
-                            Chegirma
-                          </span>
+                            <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 dark:bg-rose-500/20 px-1.5 py-0.5 rounded-md border border-rose-500/20 whitespace-nowrap">
+                              {(() => {
+                                if (product.priceNum && product.oldPriceNum && product.oldPriceNum > product.priceNum) {
+                                  const pct = Math.round(((product.oldPriceNum - product.priceNum) / product.oldPriceNum) * 100)
+                                  return `-${pct}%`
+                                }
+                                return lang === 'ru' ? 'Скидка' : lang === 'en' ? 'Sale' : 'Chegirma'
+                              })()}
+                            </span>
+                          </div>
                         )}
+                        <div className="flex items-baseline justify-between gap-1">
+                          <span className={`text-lg sm:text-xl font-black tracking-tight whitespace-nowrap ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            {product.price}
+                          </span>
+                          <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded whitespace-nowrap">
+                            ✓ {lang === 'ru' ? 'В наличии' : lang === 'en' ? 'In Stock' : 'Mavjud'}
+                          </span>
+                        </div>
                       </div>
 
                       <button
-                        onClick={() => onAddToCart(product)}
-                        className="w-full btn-pink btn-vauu-shine py-3 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-pink-500/20 group/btn"
+                        onClick={() => {
+                          soundFx.playCartSuccess()
+                          onAddToCart(product)
+                        }}
+                        className="w-full btn-pink btn-vauu-shine py-3 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-pink-500/20 group/btn transition-transform active:scale-[0.98]"
                       >
                         <svg className="w-4 h-4 group-hover/btn:scale-115 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span>Savatga Qo'shish</span>
+                        <span className="whitespace-nowrap">{t('addToCart', "Savatga Qo'shish")}</span>
                       </button>
                     </div>
                   </div>
-                </div>
+                </TiltCard3D>
               )
             })}
           </div>
@@ -736,7 +1299,7 @@ const Main = ({
       {/* ========================================================= */}
       {/* 4. REKLAMA & MAXSUS AKSIYA BANNERI                        */}
       {/* ========================================================= */}
-      <section id="featured" className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="featured" className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto reveal-scale">
         <div
           className={`relative rounded-3xl overflow-hidden border-2 transition-all duration-300 shadow-2xl group ${
             isDark
@@ -763,26 +1326,50 @@ const Main = ({
             <div className="lg:col-span-7 space-y-5 text-left">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 bg-pink-600 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg shadow-pink-600/40 animate-pulse">
-                  <span>📢</span> MAXSUS AKSIYA · FLAME DEAL
+                  <span>📢</span> {lang === 'ru' ? 'СПЕЦПРЕДЛОЖЕНИЕ · FLAME DEAL' : lang === 'en' ? 'SPECIAL DEAL · FLAME DEAL' : 'MAXSUS AKSIYA · FLAME DEAL'}
                 </span>
                 <span className="inline-flex items-center gap-1 bg-amber-400 text-slate-950 text-[11px] font-black px-3.5 py-1.5 rounded-full shadow-sm">
-                  <span>🔥</span> -35% CHEGIRMA
+                  <span>🔥</span> {lang === 'ru' ? '-35% СКИДКА' : lang === 'en' ? '-35% DISCOUNT' : '-35% CHEGIRMA'}
                 </span>
                 <span className="inline-flex items-center gap-1 bg-white/15 text-pink-200 border border-white/20 text-[11px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md">
-                  🎁 Bepul XXL Sovg'a
+                  {lang === 'ru' ? '🎁 Бесплатный XXL подарок' : lang === 'en' ? '🎁 Free XXL Gift' : "🎁 Bepul XXL Sovg'a"}
                 </span>
               </div>
 
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
-                PRO Kiber Gaming <br className="hidden sm:inline" />
-                <span className="bg-gradient-to-r from-pink-400 via-fuchsia-300 to-rose-400 bg-clip-text text-transparent">
-                  4-in-1 Komplektiga
-                </span>{' '}
-                35% Chegirma!
+                {lang === 'ru' ? (
+                  <>
+                    Скидка 35% на <br className="hidden sm:inline" />
+                    <span className="bg-gradient-to-r from-pink-400 via-fuchsia-300 to-rose-400 bg-clip-text text-transparent">
+                      PRO Cyber Gaming 4-в-1
+                    </span>{' '}
+                    Комплект!
+                  </>
+                ) : lang === 'en' ? (
+                  <>
+                    35% Off On <br className="hidden sm:inline" />
+                    <span className="bg-gradient-to-r from-pink-400 via-fuchsia-300 to-rose-400 bg-clip-text text-transparent">
+                      PRO Cyber Gaming 4-in-1
+                    </span>{' '}
+                    Bundle!
+                  </>
+                ) : (
+                  <>
+                    PRO Kiber Gaming <br className="hidden sm:inline" />
+                    <span className="bg-gradient-to-r from-pink-400 via-fuchsia-300 to-rose-400 bg-clip-text text-transparent">
+                      4-in-1 Komplektiga
+                    </span>{' '}
+                    35% Chegirma!
+                  </>
+                )}
               </h2>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl font-medium">
-                CyberBlade RGB mexanik klaviatura, ultra-yengil Phantom V3 sichqoncha, ApexSound 7.1 fazoviy naushnik va XXL RGB gilamcha — bitta to'liq geyming setup to'plamida. Bepul kuryer va 2 yillik rasmiy kafolat bilan xarid qiling!
+                {lang === 'ru'
+                  ? 'Механическая клавиатура CyberBlade RGB, ультралегкая мышь Phantom V3, наушники ApexSound 7.1 и XXL RGB коврик — в одном игровом комплекте. Доставка и 2 года гарантии!'
+                  : lang === 'en'
+                  ? 'CyberBlade RGB mechanical keyboard, ultralight Phantom V3 mouse, ApexSound 7.1 headset, and XXL RGB pad — all in one setup. Fast delivery and 2-year warranty!'
+                  : "CyberBlade RGB mexanik klaviatura, ultra-yengil Phantom V3 sichqoncha, ApexSound 7.1 fazoviy naushnik va XXL RGB gilamcha — bitta to'liq geyming setup to'plamida. Bepul kuryer va 2 yillik rasmiy kafolat bilan xarid qiling!"}
               </p>
 
               {/* High-speed isolated countdown timer */}
@@ -790,24 +1377,27 @@ const Main = ({
 
               <div className="flex flex-wrap items-center gap-4 pt-1">
                 <div>
-                  <div className="text-xs text-slate-400 line-through font-bold">2 150 000 so'm</div>
+                  <div className="text-xs text-slate-400 line-through font-bold">{formatPrice(2150000)}</div>
                   <div className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
-                    <span className="text-pink-400">1 390 000</span>
-                    <span className="text-xs font-bold text-slate-300">so'm</span>
+                    <span className="text-pink-400">{formatPrice(1390000)}</span>
                   </div>
                 </div>
 
                 <div className="h-8 w-px bg-white/15 hidden sm:block" />
 
                 <div className="flex items-center gap-2 bg-white/10 border border-white/20 px-3.5 py-2 rounded-xl backdrop-blur-md">
-                  <span className="text-xs text-slate-300 font-medium">Promokod:</span>
+                  <span className="text-xs text-slate-300 font-medium">
+                    {lang === 'ru' ? 'Промокод:' : lang === 'en' ? 'Promo code:' : 'Promokod:'}
+                  </span>
                   <code className="text-sm font-mono font-black text-amber-300 tracking-wider">UPGRADE2026</code>
                   <button
                     type="button"
                     onClick={handleCopyPromo}
                     className="text-xs font-bold text-pink-400 hover:text-white transition-colors cursor-pointer ml-1 underline"
                   >
-                    {promoCopied ? '✓ Nusxalandi' : 'Nusxa olish'}
+                    {promoCopied 
+                      ? (lang === 'ru' ? '✓ Скопировано' : lang === 'en' ? '✓ Copied' : '✓ Nusxalandi') 
+                      : (lang === 'ru' ? 'Скопировать' : lang === 'en' ? 'Copy' : 'Nusxa olish')}
                   </button>
                 </div>
               </div>
@@ -821,12 +1411,24 @@ const Main = ({
                   {bundleAdded ? (
                     <>
                       <span>✓</span>
-                      <span>Savatga Muvaffaqiyatli Qo'shildi!</span>
+                      <span>
+                        {lang === 'ru' 
+                          ? 'Успешно добавлено в корзину!' 
+                          : lang === 'en' 
+                          ? 'Successfully Added to Cart!' 
+                          : "Savatga Muvaffaqiyatli Qo'shildi!"}
+                      </span>
                     </>
                   ) : (
                     <>
                       <span>🛒</span>
-                      <span>Komplektni Xarid Qilish</span>
+                      <span>
+                        {lang === 'ru' 
+                          ? 'Купить комплект' 
+                          : lang === 'en' 
+                          ? 'Buy Bundle' 
+                          : 'Komplektni Xarid Qilish'}
+                      </span>
                     </>
                   )}
                 </button>
@@ -834,7 +1436,7 @@ const Main = ({
                   href="#catalog"
                   className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold px-7 py-4 rounded-2xl text-sm sm:text-base text-center transition-all flex items-center justify-center gap-2"
                 >
-                  <span>Katalogdagi Aksiyalar →</span>
+                  <span>{lang === 'ru' ? 'Акции в каталоге →' : lang === 'en' ? 'Deals in Catalog →' : 'Katalogdagi Aksiyalar →'}</span>
                 </a>
               </div>
             </div>
@@ -843,35 +1445,43 @@ const Main = ({
               <div className="w-full max-w-md rounded-3xl backdrop-blur-2xl bg-black/50 border border-white/20 p-6 sm:p-7 shadow-2xl shadow-black/80 space-y-5">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <div className="bg-pink-600 text-white px-3.5 py-1 rounded-xl font-black text-xs shadow-lg flex items-center gap-1.5">
-                    <span>⚡</span> 35% TEJAB QOLING
+                    <span>⚡</span> {lang === 'ru' ? 'СЭКОНОМЬТЕ 35%' : lang === 'en' ? 'SAVE 35%' : '35% TEJAB QOLING'}
                   </div>
                   <div className="bg-white/10 backdrop-blur-md text-amber-300 px-3 py-1 rounded-xl font-bold text-xs border border-white/10 flex items-center gap-1">
-                    <span>★</span> 4.9 (128 ta baho)
+                    <span>★</span> 4.9 ({lang === 'ru' ? '128 отзывов' : lang === 'en' ? '128 ratings' : '128 ta baho'})
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="text-sm font-black text-white flex items-center justify-between">
-                    <span>4-in-1 Komplekt Tarkibi:</span>
-                    <span className="text-[11px] text-pink-400 font-extrabold">24s Yetkazish</span>
+                    <span>{lang === 'ru' ? 'Состав комплекта 4-в-1:' : lang === 'en' ? '4-in-1 Bundle Includes:' : '4-in-1 Komplekt Tarkibi:'}</span>
+                    <span className="text-[11px] text-pink-400 font-extrabold">{lang === 'ru' ? '24ч Доставка' : lang === 'en' ? '24h Delivery' : '24s Yetkazish'}</span>
                   </div>
 
                   <ul className="space-y-2 text-xs sm:text-sm text-slate-200">
                     <li className="flex items-center gap-2.5 bg-white/5 p-3 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                       <span className="text-pink-400 font-bold text-base">⌨️</span>
-                      <span className="font-semibold">CyberBlade RGB Mexanik Klaviatura</span>
+                      <span className="font-semibold">
+                        {lang === 'ru' ? 'Механическая клавиатура CyberBlade RGB' : lang === 'en' ? 'CyberBlade RGB Mechanical Keyboard' : 'CyberBlade RGB Mexanik Klaviatura'}
+                      </span>
                     </li>
                     <li className="flex items-center gap-2.5 bg-white/5 p-3 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                       <span className="text-pink-400 font-bold text-base">🖱️</span>
-                      <span className="font-semibold">Phantom V3 26000 DPI Sichqoncha</span>
+                      <span className="font-semibold">
+                        {lang === 'ru' ? 'Мышь Phantom V3 26000 DPI' : lang === 'en' ? 'Phantom V3 26000 DPI Mouse' : 'Phantom V3 26000 DPI Sichqoncha'}
+                      </span>
                     </li>
                     <li className="flex items-center gap-2.5 bg-white/5 p-3 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                       <span className="text-pink-400 font-bold text-base">🎧</span>
-                      <span className="font-semibold">ApexSound 7.1 Fazoviy Gaming Naushnik</span>
+                      <span className="font-semibold">
+                        {lang === 'ru' ? 'Геймерские наушники ApexSound 7.1' : lang === 'en' ? 'ApexSound 7.1 Spatial Headset' : 'ApexSound 7.1 Fazoviy Gaming Naushnik'}
+                      </span>
                     </li>
                     <li className="flex items-center gap-2.5 bg-pink-500/20 p-3 rounded-2xl border border-pink-500/50 text-pink-200 font-extrabold">
                       <span className="text-base">🎁</span>
-                      <span>Maxsus Sovg'a: XXL RGB Gaming Kovrik</span>
+                      <span>
+                        {lang === 'ru' ? 'Спецподарок: Игровой коврик XXL RGB' : lang === 'en' ? 'Special Gift: XXL RGB Gaming Mousepad' : "Maxsus Sovg'a: XXL RGB Gaming Kovrik"}
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -879,9 +1489,11 @@ const Main = ({
                 <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400 font-bold">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    Omborda 7 ta qoldi
+                    {lang === 'ru' ? 'Осталось 7 шт на складе' : lang === 'en' ? 'Only 7 left in stock' : 'Omborda 7 ta qoldi'}
                   </span>
-                  <span className="text-emerald-400 font-extrabold">✓ 2 Yillik Kafolat</span>
+                  <span className="text-emerald-400 font-extrabold">
+                    {lang === 'ru' ? '✓ 2 года гарантии' : lang === 'en' ? '✓ 2-Year Warranty' : '✓ 2 Yillik Kafolat'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -895,19 +1507,35 @@ const Main = ({
       <section
         id="benefits"
         style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 400px' }}
-        className={`py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t transition-colors ${
+        className={`py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t transition-colors reveal-on-scroll ${
           isDark ? 'border-slate-800' : 'border-slate-100'
         }`}
       >
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-pink-50 dark:bg-pink-950/60 border border-pink-200 dark:border-pink-800/60 text-xs font-black uppercase tracking-widest text-pink-600 dark:text-pink-400 mb-3">
-            <span>🛡️</span> AFZALLIKLARIMIZ
+            <span>🛡️</span> {lang === 'ru' ? 'НАШИ ПРЕИМУЩЕСТВА' : lang === 'en' ? 'OUR ADVANTAGES' : 'AFZALLIKLARIMIZ'}
           </div>
           <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            Nega Minglab Foydalanuvchilar <span className="text-gradient-animated">UPGRADE</span> Aksessuarlarini Tanlaydi?
+            {lang === 'ru' ? (
+              <>
+                Почему тысячи пользователей выбирают <span className="text-gradient-animated">UPGRADE</span>?
+              </>
+            ) : lang === 'en' ? (
+              <>
+                Why Do Thousands Choose <span className="text-gradient-animated">UPGRADE</span> Accessories?
+              </>
+            ) : (
+              <>
+                Nega Minglab Foydalanuvchilar <span className="text-gradient-animated">UPGRADE</span> Aksessuarlarini Tanlaydi?
+              </>
+            )}
           </h2>
           <p className={`text-sm sm:text-base font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-            Biz faqatgina sifatli va ishonchli uskunalar bilan kompyuter qarshisidagi vaqtingizni maksimal darajada qulay qilamiz.
+            {lang === 'ru'
+              ? 'Мы делаем ваше время за компьютером максимально комфортным с помощью надежных устройств.'
+              : lang === 'en'
+              ? 'We make your screen time as comfortable as possible with reliable and top-tier gear.'
+              : 'Biz faqatgina sifatli va ishonchli uskunalar bilan kompyuter qarshisidagi vaqtingizni maksimal darajada qulay qilamiz.'}
           </p>
         </div>
 
@@ -915,9 +1543,9 @@ const Main = ({
           {[
             {
               icon: '🚚',
-              title: 'Tezkor Yetkazish',
-              sub: "Butun O'zbekiston bo'ylab 24 soat ichida eshikkacha",
-              badge: '24S ICHIDA',
+              title: lang === 'ru' ? 'Быстрая доставка' : lang === 'en' ? 'Fast Delivery' : 'Tezkor Yetkazish',
+              sub: lang === 'ru' ? 'По всему Узбекистану прямо до двери за 24 часа' : lang === 'en' ? 'Across Uzbekistan directly to your door in 24 hours' : "Butun O'zbekiston bo'ylab 24 soat ichida eshikkacha",
+              badge: lang === 'ru' ? 'ЗА 24 ЧАСА' : lang === 'en' ? 'WITHIN 24H' : '24S ICHIDA',
               tagColor: isDark ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-blue-50 text-blue-700 border-blue-200',
               iconBg: isDark ? 'from-blue-500/25 to-sky-500/15 border-blue-500/30 text-blue-400' : 'from-blue-100 to-sky-50 border-blue-200/80 text-blue-600',
               cardBorder: isDark ? 'border-slate-800/90 hover:border-blue-500/60' : 'border-slate-200/80 hover:border-blue-300',
@@ -927,9 +1555,9 @@ const Main = ({
             },
             {
               icon: '🛡️',
-              title: '2 Yillik Kafolat',
-              sub: '100% original uskunalar va servis kafolati',
-              badge: 'RASMIY KAFOLAT',
+              title: lang === 'ru' ? '2 года гарантии' : lang === 'en' ? '2-Year Warranty' : '2 Yillik Kafolat',
+              sub: lang === 'ru' ? '100% оригинальные товары и сервисная гарантия' : lang === 'en' ? '100% genuine products with service warranty' : '100% original uskunalar va servis kafolati',
+              badge: lang === 'ru' ? 'ОФИЦИАЛЬНАЯ' : lang === 'en' ? 'OFFICIAL' : 'RASMIY KAFOLAT',
               tagColor: isDark ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200',
               iconBg: isDark ? 'from-emerald-500/25 to-teal-500/15 border-emerald-500/30 text-emerald-400' : 'from-emerald-100 to-teal-50 border-emerald-200/80 text-emerald-600',
               cardBorder: isDark ? 'border-slate-800/90 hover:border-emerald-500/60' : 'border-slate-200/80 hover:border-emerald-300',
@@ -939,9 +1567,9 @@ const Main = ({
             },
             {
               icon: '💳',
-              title: "Qulay To'lov",
-              sub: 'Click, Payme, Uzum Nasiya orqali qulay to\'lov',
-              badge: "0% BO'LIB TO'LASH",
+              title: lang === 'ru' ? 'Удобная оплата' : lang === 'en' ? 'Easy Payment' : "Qulay To'lov",
+              sub: lang === 'ru' ? 'Оплата через Click, Payme, Uzum Nasiya' : lang === 'en' ? 'Seamless payment via Click, Payme, Uzum Nasiya' : 'Click, Payme, Uzum Nasiya orqali qulay to\'lov',
+              badge: lang === 'ru' ? '0% РАССРОЧКА' : lang === 'en' ? '0% INSTALLMENT' : "0% BO'LIB TO'LASH",
               tagColor: isDark ? 'bg-violet-500/20 text-violet-300 border-violet-500/30' : 'bg-violet-50 text-violet-700 border-violet-200',
               iconBg: isDark ? 'from-violet-500/25 to-purple-500/15 border-violet-500/30 text-violet-400' : 'from-violet-100 to-purple-50 border-violet-200/80 text-violet-600',
               cardBorder: isDark ? 'border-slate-800/90 hover:border-violet-500/60' : 'border-slate-200/80 hover:border-violet-300',
@@ -951,9 +1579,9 @@ const Main = ({
             },
             {
               icon: '🔄',
-              title: '14 Kun Almashtirish',
-              sub: "Xavfsiz xarid va to'liq qaytarib berish kafolati",
-              badge: '100% XAVFSIZ',
+              title: lang === 'ru' ? '14 дней на возврат' : lang === 'en' ? '14-Day Exchange' : '14 Kun Almashtirish',
+              sub: lang === 'ru' ? 'Безопасная покупка и гарантия возврата денег' : lang === 'en' ? 'Safe purchase and money-back guarantee' : "Xavfsiz xarid va to'liq qaytarib berish kafolati",
+              badge: lang === 'ru' ? '100% БЕЗОПАСНО' : lang === 'en' ? '100% SAFE' : '100% XAVFSIZ',
               tagColor: isDark ? 'bg-pink-500/20 text-pink-300 border-pink-500/30' : 'bg-pink-50 text-pink-700 border-pink-200',
               iconBg: isDark ? 'from-pink-500/25 to-rose-500/15 border-pink-500/30 text-pink-400' : 'from-pink-100 to-rose-50 border-pink-200/80 text-pink-600',
               cardBorder: isDark ? 'border-slate-800/90 hover:border-pink-500/60' : 'border-slate-200/80 hover:border-pink-300',
@@ -962,10 +1590,13 @@ const Main = ({
               iconMotion: 'group-hover:rotate-180 transition-transform duration-700 ease-out',
             },
           ].map((item, i) => (
-            <div
+            <TiltCard3D
               key={i}
+              maxTilt={12}
+              glare={true}
+              scale={1.03}
               className={`group relative overflow-hidden rounded-3xl p-6 transition-all duration-300 cyber-card
-                hover:-translate-y-2 hover:shadow-2xl ${item.hoverGlow}
+                hover:shadow-2xl ${item.hoverGlow}
                 border ${item.cardBorder}
                 ${isDark 
                   ? 'bg-slate-900/90 shadow-md shadow-black/40' 
@@ -1009,7 +1640,7 @@ const Main = ({
                   className={`h-full w-12 group-hover:w-full bg-gradient-to-r ${item.lineGradient} transition-all duration-500 ease-out`}
                 />
               </div>
-            </div>
+            </TiltCard3D>
           ))}
         </div>
       </section>
@@ -1020,20 +1651,24 @@ const Main = ({
       <section
         id="reviews"
         style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 350px' }}
-        className={`py-20 px-4 sm:px-6 lg:px-8 border-y transition-colors ${
+        className={`py-20 px-4 sm:px-6 lg:px-8 border-y transition-colors reveal-on-scroll ${
           isDark ? 'bg-[#0c101c] border-slate-800' : 'bg-slate-50/70 border-slate-100'
         }`}
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-pink-50 dark:bg-pink-950/60 border border-pink-200 dark:border-pink-800/60 text-xs font-black uppercase tracking-widest text-pink-600 dark:text-pink-400 mb-2.5">
-              <span>💬</span> MIJOZLAR FIKRLARI
+              <span>💬</span> {lang === 'ru' ? 'ОТЗЫВЫ КЛИЕНТОВ' : lang === 'en' ? 'CUSTOMER REVIEWS' : 'MIJOZLAR FIKRLARI'}
             </div>
             <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black mb-2 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Dasturchilar va Geymerlar Bahosi
+              {lang === 'ru' ? 'Оценки разработчиков и геймеров' : lang === 'en' ? 'Feedback from Devs & Gamers' : 'Dasturchilar va Geymerlar Bahosi'}
             </h2>
             <p className={`text-sm sm:text-base font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Minglab mamnun mijozlarimiz UPGRADE aksessuarlari haqida nima deyishadi?
+              {lang === 'ru' 
+                ? 'Что говорят наши довольные клиенты об аксессуарах UPGRADE?' 
+                : lang === 'en' 
+                ? 'What do our happy customers say about UPGRADE accessories?' 
+                : 'Minglab mamnun mijozlarimiz UPGRADE aksessuarlari haqida nima deyishadi?'}
             </p>
           </div>
 
@@ -1041,24 +1676,36 @@ const Main = ({
             {[
               {
                 name: 'Bobur Mirzayev',
-                role: 'Senior Frontend Developer',
-                text: 'CyberBlade Pro klaviaturasi shunchaki ajoyib! Switchlarning ovozi va sezgirligi kod yozishda boshqacha rohat bag\'ishlaydi. Simsiz ulanishi juda tez va sifatli.',
+                role: lang === 'ru' ? 'Senior Frontend Разработчик' : lang === 'en' ? 'Senior Frontend Developer' : 'Senior Frontend Developer',
+                text: lang === 'ru'
+                  ? 'Клавиатура CyberBlade Pro просто великолепна! Звук и отзывчивость свичей доставляют настоящее удовольствие при кодинге. Беспроводная связь быстрая и стабильная.'
+                  : lang === 'en'
+                  ? 'The CyberBlade Pro keyboard is simply amazing! The acoustic profile and switch response make coding an absolute joy. Wireless connection is fast and flawless.'
+                  : 'CyberBlade Pro klaviaturasi shunchaki ajoyib! Switchlarning ovozi va sezgirligi kod yozishda boshqacha rohat bag\'ishlaydi. Simsiz ulanishi juda tez va sifatli.',
                 rating: 5,
                 product: 'CyberBlade Pro RGB',
                 avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'
               },
               {
                 name: 'Shahzod Karimov',
-                role: 'CS2 & Valorant Kiber Sportchisi',
-                text: 'Phantom V3 sichqonchasi bilan o\'yindagi natijalarim sezilarli darajada oshdi. Og\'irligi 58 gramm, qo\'lda deyarli sezilmaydi, sensor aniqligi 10/10.',
+                role: lang === 'ru' ? 'CS2 & Valorant Киберспортсмен' : lang === 'en' ? 'CS2 & Valorant Esports Player' : 'CS2 & Valorant Kiber Sportchisi',
+                text: lang === 'ru'
+                  ? 'С мышью Phantom V3 мои результаты в играх ощутимо выросли. Вес всего 58 грамм, в руке почти невесома, сенсор бьет 10 из 10.'
+                  : lang === 'en'
+                  ? 'With the Phantom V3 mouse, my in-game precision improved substantially. At just 58 grams it glides effortlessly, sensor accuracy is 10/10.'
+                  : 'Phantom V3 sichqonchasi bilan o\'yindagi natijalarim sezilarli darajada oshdi. Og\'irligi 58 gramm, qo\'lda deyarli sezilmaydi, sensor aniqligi 10/10.',
                 rating: 5,
                 product: 'Phantom V3 Ultralight',
                 avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'
               },
               {
                 name: 'Dildora Alimova',
-                role: 'UI/UX Dizayner',
-                text: 'ApexSound 7.1 naushniklarini kun bo\'yi taqib o\'tiraman, quloqni mutlaqo charchatmaydi. Tovush fazoviy toza va mikrofon sifati juda yuqori darajada.',
+                role: lang === 'ru' ? 'UI/UX Дизайнер' : lang === 'en' ? 'UI/UX Designer' : 'UI/UX Dizayner',
+                text: lang === 'ru'
+                  ? 'Наушники ApexSound 7.1 ношу целый рабочий день, уши вообще не устают. Звук кристально чистый, а микрофон на высочайшем уровне.'
+                  : lang === 'en'
+                  ? 'I wear ApexSound 7.1 headphones all day long, zero ear fatigue. Spatial audio is crisp and the microphone quality is top-notch.'
+                  : 'ApexSound 7.1 naushniklarini kun bo\'yi taqib o\'tiraman, quloqni mutlaqo charchatmaydi. Tovush fazoviy toza va mikrofon sifati juda yuqori darajada.',
                 rating: 5,
                 product: 'ApexSound 7.1 Spatial',
                 avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80'
@@ -1077,7 +1724,7 @@ const Main = ({
                     {'★'.repeat(rev.rating)}
                   </div>
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">
-                    <span>✓</span> Tasdiqlangan xarid
+                    <span>✓</span> {lang === 'ru' ? 'Подтвержденная покупка' : lang === 'en' ? 'Verified Purchase' : 'Tasdiqlangan xarid'}
                   </span>
                 </div>
 
@@ -1114,12 +1761,19 @@ const Main = ({
       </section>
 
       {/* ========================================================= */}
+      {/* 6. INTERACTIVE FAQ ACCORDION SECTION                      */}
+      {/* ========================================================= */}
+      <div className="reveal-on-scroll">
+        <FaqSection theme={theme} />
+      </div>
+
+      {/* ========================================================= */}
       {/* 7. PRE-FOOTER: CONTACT & CONSULTATION FORM                */}
       {/* ========================================================= */}
       <section
         id="contact"
         style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 300px' }}
-        className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
+        className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto reveal-scale"
       >
         <div
           className={`rounded-3xl p-8 sm:p-12 border-2 text-center shadow-2xl transition-colors relative overflow-hidden ${
@@ -1132,25 +1786,47 @@ const Main = ({
           <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
 
           <div className="max-w-xl mx-auto relative z-10">
-            <img loading="lazy" decoding="async" src={logoImg} alt="UPGRADE" className="h-12 sm:h-14 w-auto mx-auto mb-4 object-contain" />
+            <img
+              loading="lazy"
+              decoding="async"
+              src={logoImg}
+              alt="UPGRADE"
+              className={`h-12 sm:h-14 w-auto mx-auto mb-4 object-contain ${
+                isDark ? 'bg-white/95 px-4 py-1.5 rounded-2xl shadow-md' : ''
+              }`}
+            />
             <h2 className={`text-2xl sm:text-4xl font-black mb-3 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Qaysi Aksessuar Sizga Mos Kelishini Bilmayapsizmi?
+              {lang === 'ru' 
+                ? 'Не знаете, какой аксессуар подойдет именно вам?' 
+                : lang === 'en' 
+                ? 'Not sure which accessory fits you best?' 
+                : 'Qaysi Aksessuar Sizga Mos Kelishini Bilmayapsizmi?'}
             </h2>
             <p className={`text-sm sm:text-base mb-8 font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-              Telefon raqamingizni qoldiring, mutaxassisimiz 10 daqiqa ichida siz bilan bog'lanib, kompyuteringiz uchun eng maqbul aksessuarni tanlashda bepul maslahat beradi.
+              {lang === 'ru'
+                ? 'Оставьте свой номер телефона, наш специалист свяжется с вами в течение 10 минут и бесплатно поможет подобрать идеальный аксессуар.'
+                : lang === 'en'
+                ? 'Leave your phone number, and our specialist will contact you within 10 minutes to help you pick the best gear.'
+                : "Telefon raqamingizni qoldiring, mutaxassisimiz 10 daqiqa ichida siz bilan bog'lanib, kompyuteringiz uchun eng maqbul aksessuarni tanlashda bepul maslahat beradi."}
             </p>
 
             {formSubmitted ? (
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-bold animate-in fade-in flex items-center justify-center gap-2">
                 <span>🎉</span>
-                <span>Rahmat! So'rovingiz qabul qilindi. Menejerimiz tez orada sizga qo'ng'iroq qiladi.</span>
+                <span>
+                  {lang === 'ru'
+                    ? 'Спасибо! Ваша заявка принята. Наш менеджер скоро перезвонит.'
+                    : lang === 'en'
+                    ? 'Thank you! Your request has been received. Our manager will call you shortly.'
+                    : "Rahmat! So'rovingiz qabul qilindi. Menejerimiz tez orada sizga qo'ng'iroq qiladi."}
+                </span>
               </div>
             ) : (
               <form onSubmit={handleLeadSubmit} className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   required
-                  placeholder="Ismingiz..."
+                  placeholder={lang === 'ru' ? 'Ваше имя...' : lang === 'en' ? 'Your name...' : 'Ismingiz...'}
                   value={leadForm.name}
                   onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
                   className={`flex-1 px-5 py-3.5 rounded-2xl border text-sm font-medium focus:outline-hidden transition-all shadow-xs ${
@@ -1175,17 +1851,17 @@ const Main = ({
                   type="submit"
                   className="btn-pink btn-vauu-shine px-8 py-3.5 rounded-2xl text-sm font-extrabold shrink-0 shadow-lg shadow-pink-500/30 cursor-pointer"
                 >
-                  Maslahat Olish
+                  {lang === 'ru' ? 'Получить консультацию' : lang === 'en' ? 'Get Consultation' : 'Maslahat Olish'}
                 </button>
               </form>
             )}
 
             <div className="flex flex-wrap items-center justify-center gap-6 mt-6 text-xs text-slate-500 font-bold">
-              <span>🔒 Ma'lumotlaringiz xavfsiz</span>
+              <span>🔒 {lang === 'ru' ? 'Данные защищены' : lang === 'en' ? 'Data secured' : "Ma'lumotlaringiz xavfsiz"}</span>
               <span>•</span>
-              <span>📞 Bepul qo'ng'iroq</span>
+              <span>📞 {lang === 'ru' ? 'Бесплатный звонок' : lang === 'en' ? 'Free call' : "Bepul qo'ng'iroq"}</span>
               <span>•</span>
-              <span>⚡ 10 daqiqada javob</span>
+              <span>⚡ {lang === 'ru' ? 'Ответ за 10 минут' : lang === 'en' ? 'Answer in 10 mins' : '10 daqiqada javob'}</span>
             </div>
           </div>
         </div>
@@ -1204,87 +1880,163 @@ const Main = ({
             <button
               onClick={() => setActiveModalProduct(null)}
               className="absolute top-5 right-5 p-2 rounded-2xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              title="Yopish"
+              title={t('cart_remove', 'Yopish')}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-              <img
-                loading="lazy"
-                decoding="async"
-                src={activeModalProduct.image}
-                alt={activeModalProduct.name}
-                className={`w-full aspect-square rounded-2xl object-cover border shadow-md ${
-                  isDark ? 'border-slate-800' : 'border-slate-100'
-                }`}
-                onError={(e) => {
-                  e.target.onerror = null
-                  e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
-                }}
-              />
-              <div className="space-y-3">
-                <span className="text-xs font-black text-pink-600 bg-pink-50 dark:bg-pink-950/70 dark:text-pink-400 px-3 py-1 rounded-xl">
-                  {activeModalProduct.category}
-                </span>
-                <h3 className={`text-xl sm:text-2xl font-black leading-snug ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {activeModalProduct.name}
-                </h3>
-                <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-500'}`}>
-                  {activeModalProduct.description}
-                </p>
+            {(() => {
+              const modalProduct = tp(activeModalProduct)
+              return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src={modalProduct.image}
+                    alt={modalProduct.name}
+                    className={`w-full aspect-square rounded-2xl object-cover border shadow-md ${
+                      isDark ? 'border-slate-800' : 'border-slate-100'
+                    }`}
+                    onError={(e) => {
+                      e.target.onerror = null
+                      e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
+                    }}
+                  />
+                  <div className="space-y-3">
+                    <span className="text-xs font-black text-pink-600 bg-pink-50 dark:bg-pink-950/70 dark:text-pink-400 px-3 py-1 rounded-xl">
+                      {tc(modalProduct.category)}
+                    </span>
+                    <h3 className={`text-xl sm:text-2xl font-black leading-snug ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      {modalProduct.name}
+                    </h3>
+                    <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-500'}`}>
+                      {modalProduct.description}
+                    </p>
 
-                <div className="space-y-1.5 pt-2">
-                  <div className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
-                    Texnik xususiyatlar:
-                  </div>
-                  {(activeModalProduct.specs || []).map((spec, i) => (
+                    <div className="space-y-1.5 pt-2">
+                      <div className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
+                        {lang === 'ru' ? 'Технические характеристики:' : lang === 'en' ? 'Specifications:' : 'Texnik xususiyatlar:'}
+                      </div>
+                      {(modalProduct.specs || []).map((spec, i) => (
+                        <div
+                          key={i}
+                          className={`text-xs font-medium flex items-center gap-2 ${
+                            isDark ? 'text-slate-300' : 'text-slate-600'
+                          }`}
+                        >
+                          <span className="text-pink-600 font-bold">✓</span> {spec}
+                        </div>
+                      ))}
+                    </div>
+
                     <div
-                      key={i}
-                      className={`text-xs font-medium flex items-center gap-2 ${
-                        isDark ? 'text-slate-300' : 'text-slate-600'
+                      className={`pt-4 border-t flex items-baseline gap-2 ${
+                        isDark ? 'border-slate-800' : 'border-slate-100'
                       }`}
                     >
-                      <span className="text-pink-600 font-bold">✓</span> {spec}
+                      <span className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        {modalProduct.price}
+                      </span>
+                      {modalProduct.oldPrice && (
+                        <span className="text-sm text-slate-400 line-through">
+                          {modalProduct.oldPrice}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
 
-                <div
-                  className={`pt-4 border-t flex items-baseline gap-2 ${
-                    isDark ? 'border-slate-800' : 'border-slate-100'
-                  }`}
-                >
-                  <span className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    {activeModalProduct.price}
-                  </span>
-                  {activeModalProduct.oldPrice && (
-                    <span className="text-sm text-slate-400 line-through">
-                      {activeModalProduct.oldPrice}
-                    </span>
-                  )}
+                    <div className="pt-2 flex gap-3">
+                      <button
+                        onClick={() => {
+                          onAddToCart(modalProduct)
+                          setActiveModalProduct(null)
+                        }}
+                        className="flex-1 btn-pink btn-vauu-shine py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-pink-500/25"
+                      >
+                        <span>🛒 {t('addToCart', "Savatga Qo'shish")}</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="pt-2 flex gap-3">
-                  <button
-                    onClick={() => {
-                      onAddToCart(activeModalProduct)
-                      setActiveModalProduct(null)
-                    }}
-                    className="flex-1 btn-pink btn-vauu-shine py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-pink-500/25"
-                  >
-                    <span>🛒 Savatga Qo'shish</span>
-                  </button>
-                </div>
-              </div>
-            </div>
+              )
+            })()}
           </div>
         </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* FLOATING "TEPAGA CHIQISH" WITH CIRCULAR SCROLL PROGRESS   */}
+      {/* ========================================================= */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className={`fixed bottom-6 right-6 z-40 w-13 h-13 rounded-2xl backdrop-blur-xl shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-90 animate-bounce-in-up group border ${
+            isDark
+              ? 'bg-slate-900/90 hover:bg-slate-800 text-white border-pink-500/40 shadow-black/80'
+              : 'bg-white/95 hover:bg-pink-50 text-slate-900 border-pink-300/80 shadow-pink-500/20'
+          }`}
+          title={`${Math.round(scrollProgress)}% • ${lang === 'ru' ? 'Наверх' : lang === 'en' ? 'Scroll to top' : 'Tepaga chiqish'}`}
+          aria-label="Tepaga chiqish"
+        >
+          {/* Circular SVG Progress Ring */}
+          <svg className="absolute inset-0 w-full h-full -rotate-90 p-1 pointer-events-none" viewBox="0 0 48 48">
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              className={isDark ? 'text-slate-800/80' : 'text-slate-100'}
+              fill="transparent"
+            />
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              stroke="url(#scrollProgressGrad)"
+              strokeWidth="2.8"
+              fill="transparent"
+              strokeDasharray="125.66"
+              strokeDashoffset={125.66 - (125.66 * scrollProgress) / 100}
+              strokeLinecap="round"
+              className="transition-[stroke-dashoffset] duration-150 ease-out"
+            />
+            <defs>
+              <linearGradient id="scrollProgressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ec4899" />
+                <stop offset="100%" stopColor="#a855f7" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {/* Arrow Icon */}
+          <svg className="w-5 h-5 text-pink-500 group-hover:text-pink-400 transition-all group-hover:-translate-y-1 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 11l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </button>
+      )}
+
+      {/* ========================================================= */}
+      {/* PRODUCT COMPARISON MODAL                                  */}
+      {/* ========================================================= */}
+      {isCompareOpen && (
+        <CompareModal
+          isOpen={isCompareOpen}
+          onClose={() => setIsCompareOpen(false)}
+          products={products}
+          compareIds={compareIds}
+          onRemoveFromCompare={(id) => {
+            setCompareIds((prev) => prev.filter((item) => item !== id))
+          }}
+          onAddToCart={onAddToCart}
+          theme={theme}
+        />
       )}
     </div>
   )
 }
 
 export default Main
+

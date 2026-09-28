@@ -3,6 +3,8 @@ import Header from './page/Header'
 import Main from './page/Main'
 import Footer from './page/Footer'
 import initialDb from '../db.json'
+import { useLanguage } from './context/LanguageContext'
+import { sanitizeUserForSession } from './utils/security'
 
 // Lazy-loaded heavy components for lightning-fast initial load
 const AdminPanel = lazy(() => import('./page/AdminPanel'))
@@ -12,6 +14,7 @@ const AuthModal = lazy(() => import('./page/AuthModal'))
 const SearchModal = lazy(() => import('./page/SearchModal'))
 
 const App = () => {
+  const { t, tp, formatPrice } = useLanguage()
   // Global Search Modal State
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [activeModalProduct, setActiveModalProduct] = useState(null)
@@ -23,6 +26,7 @@ const App = () => {
       return 'light'
     }
   })
+  const isDark = theme === 'dark'
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -84,6 +88,27 @@ const App = () => {
   })
   const [consultations, setConsultations] = useState(initialDb.consultations)
 
+  // Wishlist Favorites State
+  const [wishlist, setWishlist] = useState(() => {
+    try {
+      const saved = localStorage.getItem('upg_wishlist')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
+  const toggleWishlist = (id) => {
+    setWishlist((prev) => {
+      const exists = prev.includes(id)
+      const next = exists ? prev.filter((item) => item !== id) : [...prev, id]
+      try {
+        localStorage.setItem('upg_wishlist', JSON.stringify(next))
+      } catch {}
+      return next
+    })
+  }
+
   // Cart State for User
   const [cart, setCart] = useState([
     {
@@ -111,7 +136,7 @@ const App = () => {
       return [...prevCart, { ...product, qty: 1 }]
     })
 
-    setToastMessage(`✓ "${product.name}" savatchaga qo'shildi!`)
+    setToastMessage(`✓ "${tp(product).name}" ${t('cart_added_toast', "savatchaga qo'shildi!")}`)
     setTimeout(() => {
       setToastMessage('')
     }, 3000)
@@ -210,38 +235,39 @@ const App = () => {
       return
     }
 
-    // If logged-in user already has the required role, switch directly
-    if (currentUser && (currentUser.role === targetRole || currentUser.role === 'admin')) {
+    // Strict role check: user can only switch to target role if currentUser strictly has that role
+    if (currentUser && currentUser.role === targetRole) {
       setCurrentRole(targetRole)
       return
     }
 
-    // Otherwise prompt auth modal to switch account
+    // Otherwise prompt auth modal to switch/log into the specific required account
     setIsAuthModalOpen(true)
-    setToastMessage(`ℹ️ ${targetRole === 'admin' ? 'Admin' : 'Menejer'} paneliga kirish uchun hisobni tasdiqlang`)
+    setToastMessage(`ℹ️ ${targetRole === 'admin' ? 'Admin' : 'Menejer'} bo'limiga kirish uchun tegishli hisobga kiring`)
     setTimeout(() => setToastMessage(''), 3000)
   }
 
-  // Login Success Callback
+  // Login Success Callback (Session Sanitized)
   const handleLoginSuccess = (user) => {
-    setCurrentUser(user)
-    setCurrentRole(user.role || 'user')
+    const safeUser = sanitizeUserForSession(user)
+    setCurrentUser(safeUser)
+    setCurrentRole(safeUser.role || 'user')
     setIsAuthModalOpen(false)
 
     try {
-      localStorage.setItem('upg_current_user', JSON.stringify(user))
+      localStorage.setItem('upg_current_user', JSON.stringify(safeUser))
     } catch (e) {
       console.error(e)
     }
 
     const roleName =
-      user.role === 'admin'
+      safeUser.role === 'admin'
         ? '👑 Admin'
-        : user.role === 'manager'
+        : safeUser.role === 'manager'
         ? '👔 Menejer'
         : '🛒 Xaridor'
 
-    setToastMessage(`✓ Xush kelibsiz, ${user.name}! (${roleName})`)
+    setToastMessage(`✓ Xush kelibsiz, ${safeUser.name}! (${roleName})`)
     setTimeout(() => {
       setToastMessage('')
     }, 3500)
@@ -325,7 +351,7 @@ const App = () => {
             onLogout={handleLogout}
           />
         </Suspense>
-      ) : userView === 'orders' ? (
+      ) : userView === 'orders' && currentUser ? (
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold text-pink-600 text-lg">📦 Buyurtmalar Yuklanmoqda...</div>}>
           <UserOrders
             orders={orders}
@@ -340,13 +366,18 @@ const App = () => {
           {/* Header with User Info, Logout, and Theme Switcher */}
           <Header
             totalItems={totalItems}
+            wishlistCount={wishlist.length}
             onOpenCart={() => setCartOpen(true)}
             onOpenSearch={() => setIsSearchOpen(true)}
+            onOpenWishlist={() => {
+              const el = document.getElementById('catalog')
+              if (el) el.scrollIntoView({ behavior: 'smooth' })
+            }}
             currentUser={currentUser}
             onLogout={handleLogout}
             onOpenAuthModal={() => setIsAuthModalOpen(true)}
             onSwitchRole={handleRequestRole}
-            onOpenOrders={() => setUserView('orders')}
+            onOpenOrders={() => (currentUser ? setUserView('orders') : setIsAuthModalOpen(true))}
             theme={theme}
             onSetTheme={setTheme}
           />
@@ -360,34 +391,63 @@ const App = () => {
               theme={theme}
               activeModalProduct={activeModalProduct}
               setActiveModalProduct={setActiveModalProduct}
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
             />
           </main>
 
           {/* Footer */}
           <Footer theme={theme} />
 
-          {/* Slide-over Cart Drawer */}
+          {/* Sleek Floating Cyber Toast Notification */}
+          {toastMessage && (
+            <div className="fixed top-24 right-4 sm:right-6 z-50 animate-bounce-in-up flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-900/95 dark:bg-slate-900/98 text-white border border-pink-500/50 shadow-2xl shadow-pink-500/30 backdrop-blur-xl max-w-md">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-pink-600 to-rose-400 flex items-center justify-center text-white shrink-0 font-black text-sm shadow-md shadow-pink-500/30">
+                ✓
+              </div>
+              <p className="text-xs sm:text-sm font-semibold truncate flex-1 text-slate-100">
+                {toastMessage}
+              </p>
+              <button
+                onClick={() => {
+                  setCartOpen(true)
+                  setToastMessage('')
+                }}
+                className="text-xs font-black text-pink-400 hover:text-pink-300 underline cursor-pointer shrink-0 ml-1.5"
+              >
+                {t('cart_title', 'Savat')} →
+              </button>
+            </div>
+          )}
+
+          {/* Slide-over Cart Drawer (Dark/Light Cyber Theme) */}
           {cartOpen && (
             <div className="fixed inset-0 z-50 overflow-hidden">
               <div
-                className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
                 onClick={() => setCartOpen(false)}
               />
 
               <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-                <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div className={`w-screen max-w-md shadow-2xl flex flex-col transition-colors duration-300 ${
+                  isDark ? 'bg-[#0f172a] text-white border-l border-slate-800' : 'bg-white text-slate-900'
+                }`}>
                   {/* Cart Header */}
-                  <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                  <div className={`p-6 border-b flex items-center justify-between transition-colors ${
+                    isDark ? 'border-slate-800 bg-slate-900/80' : 'border-slate-100 bg-slate-50/60'
+                  }`}>
                     <div className="flex items-center gap-2.5">
                       <span className="text-2xl">🛒</span>
                       <div>
-                        <h2 className="text-lg font-bold text-slate-900">Xaridlar Savati</h2>
-                        <p className="text-xs text-slate-500">{totalItems} ta aksessuar tanlandi</p>
+                        <h2 className={`text-lg font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{t('cart_title', 'Xaridlar Savati')}</h2>
+                        <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{totalItems} {t('cart_items_count', 'ta aksessuar tanlandi')}</p>
                       </div>
                     </div>
                     <button
                       onClick={() => setCartOpen(false)}
-                      className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                        isDark ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                      }`}
                     >
                       ✕
                     </button>
@@ -397,61 +457,75 @@ const App = () => {
                   <div className="flex-1 overflow-y-auto p-6 space-y-4">
                     {cart.length === 0 ? (
                       <div className="text-center py-16">
-                        <div className="w-20 h-20 mx-auto rounded-full bg-pink-50 flex items-center justify-center text-3xl mb-4 text-pink-500">
+                        <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-3xl mb-4 ${
+                          isDark ? 'bg-pink-950/40 text-pink-400' : 'bg-pink-50 text-pink-500'
+                        }`}>
                           🛒
                         </div>
-                        <h3 className="text-lg font-bold text-slate-800 mb-1">Savatchangiz bo'sh</h3>
-                        <p className="text-sm text-slate-500 mb-6 max-w-xs mx-auto">
-                          O'zingizga yoqqan zamonaviy kompyuter aksessuarlarini savatga qo'shing.
+                        <h3 className={`text-lg font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>{t('cart_empty_title', "Savatchangiz bo'sh")}</h3>
+                        <p className={`text-sm mb-6 max-w-xs mx-auto ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          {t('cart_empty_desc', "O'zingizga yoqqan zamonaviy kompyuter aksessuarlarini savatga qo'shing.")}
                         </p>
                         <button
                           onClick={() => setCartOpen(false)}
                           className="btn-pink px-6 py-2.5 rounded-xl text-sm cursor-pointer"
                         >
-                          Katalogga qaytish
+                          {t('cart_back_to_shop', 'Katalogga qaytish')}
                         </button>
                       </div>
                     ) : (
                       cart.map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-4 p-3.5 rounded-2xl border border-slate-100 bg-slate-50/70 hover:border-pink-200 transition-colors"
+                          className={`flex items-center gap-4 p-3.5 rounded-2xl border transition-all duration-200 ${
+                            isDark
+                              ? 'border-slate-800 bg-slate-900/60 hover:border-pink-500/40'
+                              : 'border-slate-100 bg-slate-50/70 hover:border-pink-200'
+                          }`}
                         >
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="w-16 h-16 rounded-xl object-cover border border-slate-200"
+                            className={`w-16 h-16 rounded-xl object-cover border ${
+                              isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
+                            }`}
                           />
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-bold text-slate-800 truncate mb-1">
-                              {item.name}
+                            <h4 className={`text-sm font-bold truncate mb-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                              {tp(item).name}
                             </h4>
-                            <div className="text-xs font-bold text-pink-600 mb-2">
-                              {(item.priceNum * item.qty).toLocaleString('uz-UZ')} so'm
+                            <div className="text-xs font-bold text-pink-500 mb-2">
+                              {formatPrice(item.priceNum * item.qty)}
                             </div>
                             <div className="flex items-center gap-3">
-                              <div className="flex items-center border border-slate-200 rounded-lg bg-white overflow-hidden">
+                              <div className={`flex items-center border rounded-lg overflow-hidden ${
+                                isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-white'
+                              }`}>
                                 <button
                                   onClick={() => updateQty(item.id, -1)}
-                                  className="w-7 h-7 flex items-center justify-center text-slate-600 hover:bg-slate-100 text-sm font-bold active:bg-pink-100 cursor-pointer"
+                                  className={`w-7 h-7 flex items-center justify-center text-sm font-bold cursor-pointer ${
+                                    isDark ? 'text-slate-300 hover:bg-slate-700 active:bg-pink-900' : 'text-slate-600 hover:bg-slate-100 active:bg-pink-100'
+                                  }`}
                                 >
                                   -
                                 </button>
-                                <span className="w-8 text-center text-xs font-bold text-slate-800">
+                                <span className={`w-8 text-center text-xs font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
                                   {item.qty}
                                 </span>
                                 <button
                                   onClick={() => updateQty(item.id, 1)}
-                                  className="w-7 h-7 flex items-center justify-center text-slate-600 hover:bg-slate-100 text-sm font-bold active:bg-pink-100 cursor-pointer"
+                                  className={`w-7 h-7 flex items-center justify-center text-sm font-bold cursor-pointer ${
+                                    isDark ? 'text-slate-300 hover:bg-slate-700 active:bg-pink-900' : 'text-slate-600 hover:bg-slate-100 active:bg-pink-100'
+                                  }`}
                                 >
                                   +
                                 </button>
                               </div>
                               <button
                                 onClick={() => updateQty(item.id, -item.qty)}
-                                className="text-xs text-rose-500 hover:text-rose-700 underline font-medium cursor-pointer"
+                                className="text-xs text-rose-500 hover:text-rose-400 underline font-medium cursor-pointer"
                               >
-                                O'chirish
+                                {t('cart_remove', "O'chirish")}
                               </button>
                             </div>
                           </div>
@@ -462,32 +536,36 @@ const App = () => {
 
                   {/* Cart Footer */}
                   {cart.length > 0 && (
-                    <div className="p-6 border-t border-slate-100 bg-slate-50/50 space-y-4">
+                    <div className={`p-6 border-t space-y-4 ${
+                      isDark ? 'border-slate-800 bg-[#0b0f19]' : 'border-slate-100 bg-slate-50/50'
+                    }`}>
                       <div className="space-y-1.5 text-sm">
-                        <div className="flex justify-between text-slate-500">
-                          <span>Yetkazib berish:</span>
-                          <span className="text-emerald-600 font-bold">Bepul (Toshkent bo'yicha)</span>
+                        <div className={`flex justify-between ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <span>{t('cart_delivery', 'Yetkazib berish:')}</span>
+                          <span className="text-emerald-500 font-bold">{t('cart_free_delivery', "Bepul (Toshkent bo'yicha)")}</span>
                         </div>
-                        <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
-                          <span>Jami to'lov:</span>
-                          <span className="text-pink-600 text-xl font-extrabold">
-                            {totalSum.toLocaleString('uz-UZ')} so'm
+                        <div className={`flex justify-between text-base font-bold pt-2 border-t ${
+                          isDark ? 'border-slate-800 text-white' : 'border-slate-200 text-slate-900'
+                        }`}>
+                          <span>{t('cart_total', "Jami to'lov:")}</span>
+                          <span className="text-pink-500 text-xl font-black">
+                            {formatPrice(totalSum)}
                           </span>
                         </div>
                       </div>
 
                       <button
                         onClick={handleCheckout}
-                        className="w-full btn-pink py-3.5 rounded-2xl text-base font-bold flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full btn-pink btn-vauu-shine py-3.5 rounded-2xl text-base font-bold flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-pink-500/25"
                       >
-                        <span>Rasmiylashtirish</span>
+                        <span>{t('cart_checkout', 'Rasmiylashtirish')}</span>
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
                       </button>
 
-                      <p className="text-center text-xs text-slate-400">
-                        🔒 Xavfsiz to'lov: Payme, Click, Uzum Nasiya, Naqd
+                      <p className={`text-center text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                        {t('cart_security_notice', '🔒 Xavfsiz to\'lov: Payme, Click, Uzum Nasiya, Naqd')}
                       </p>
                     </div>
                   )}

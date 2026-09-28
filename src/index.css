@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     box-sizing: border-box;
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
@@ -19,6 +22,7 @@
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
@@ -29,6 +33,27 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #ec4899;
+}
+
+/* Hide scrollbars completely on elements with .no-scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 /* Light Cyber/Dot Grid Background */
@@ -69,6 +94,87 @@
 
 .animate-pulse-glow {
   animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* ========================================================= */
+/* SCROLL REVEAL & TRANSITION ANIMATIONS (Tushib-chiqish)    */
+/* ========================================================= */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94) translateY(20px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Ken Burns subtle zoom */
+@keyframes kenburns {
+  0% { transform: scale(1.04); }
+  100% { transform: scale(1.0); }
+}
+
+.animate-kenburns {
+  animation: kenburns 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Bounce in for floating scroll-to-top button */
+@keyframes bounceInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-bounce-in-up {
+  animation: bounceInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Pink Tactile / Juicy Buttons */
@@ -458,3 +564,160 @@ html.dark ::-webkit-scrollbar-thumb {
 .btn-vauu-shine:hover::after {
   left: 130%;
 }
+
+/* ══════════════════════════════════════════
+   3D PERSPECTIVE & CYBERSPACE ANIMATIONS
+══════════════════════════════════════════ */
+
+/* Animated 3D Cyber Horizon Floor Grid */
+@keyframes cyberGridSlide {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 48px; }
+}
+
+.cyber-grid-3d {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(236, 72, 153, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(236, 72, 153, 0.18) 1px, transparent 1px);
+  transform: perspective(400px) rotateX(62deg);
+  transform-origin: center bottom;
+  animation: cyberGridSlide 2.5s linear infinite;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 30%, transparent 100%);
+}
+
+.dark .cyber-grid-3d {
+  background-image: 
+    linear-gradient(to right, rgba(236, 72, 153, 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(168, 85, 247, 0.3) 1px, transparent 1px);
+}
+
+/* 3D Gyroscope Neon Orbit Rings */
+@keyframes orbitSpin3D {
+  0% {
+    transform: rotateX(65deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(65deg) rotateZ(360deg);
+  }
+}
+
+.animate-orbit-3d {
+  animation: orbitSpin3D 14s linear infinite;
+}
+
+@keyframes orbitSpin3DReverse {
+  0% {
+    transform: rotateY(65deg) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateY(65deg) rotateZ(-360deg);
+  }
+}
+
+.animate-orbit-3d-reverse {
+  animation: orbitSpin3DReverse 18s linear infinite;
+}
+
+/* 3D Floating Physics */
+@keyframes float3DLevitate {
+  0%, 100% {
+    transform: translate3d(0, 0px, 40px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: translate3d(0, -12px, 55px) rotateX(4deg) rotateY(-4deg);
+  }
+}
+
+.animate-float-3d {
+  animation: float3DLevitate 4s ease-in-out infinite;
+}
+
+/* 3D Depth Utilities */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.translate-z-20 {
+  transform: translateZ(20px);
+}
+
+.translate-z-30 {
+  transform: translateZ(30px);
+}
+
+.translate-z-50 {
+  transform: translateZ(50px);
+}
+
+.translate-z-70 {
+  transform: translateZ(70px);
+}
+
+/* ========================================================= */
+/* ULTRA LUXURY GLASS & CYBER CARDS                          */
+/* ========================================================= */
+.glass-cyber-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-cyber-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Infinite Brand Marquee */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-infinite {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 25s linear infinite;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Range Slider */
+input[type="range"].cyber-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"].cyber-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+}
+
+input[type="range"].cyber-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #ec4899;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+  transition: transform 0.15s ease;
+}
+
+input[type="range"].cyber-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+

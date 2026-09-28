@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 
 const SearchModal = ({
   isOpen,
@@ -8,21 +9,26 @@ const SearchModal = ({
   onOpenProduct,
   theme = 'light'
 }) => {
+  const { t, tc, tp, formatPrice } = useLanguage()
   const isDark = theme === 'dark'
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Barchasi')
   const [sortBy, setSortBy] = useState('default') // 'default' | 'price-asc' | 'price-desc' | 'rating'
   const inputRef = useRef(null)
 
+  const handleClose = useCallback(() => {
+    setQuery('')
+    setSelectedCategory('Barchasi')
+    onClose()
+  }, [onClose])
+
   // Focus input on open
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         inputRef.current?.focus()
       }, 100)
-    } else {
-      setQuery('')
-      setSelectedCategory('Barchasi')
+      return () => clearTimeout(timer)
     }
   }, [isOpen])
 
@@ -30,12 +36,12 @@ const SearchModal = ({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose()
+        handleClose()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  }, [isOpen, handleClose])
 
   if (!isOpen) return null
 
@@ -87,7 +93,7 @@ const SearchModal = ({
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       {/* Search Modal Box */}
@@ -111,7 +117,7 @@ const SearchModal = ({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Aksessuarlar nomi, toifasi yoki xususiyatini yozing..."
+            placeholder={t('filter_search_placeholder', 'Aksessuarlar nomi, toifasi yoki xususiyatini yozing...')}
             className={`flex-1 bg-transparent text-base sm:text-lg font-semibold focus:outline-none placeholder:font-normal ${
               isDark ? 'text-white placeholder:text-slate-500' : 'text-slate-900 placeholder:text-slate-400'
             }`}
@@ -123,14 +129,14 @@ const SearchModal = ({
               className={`p-1.5 rounded-xl text-xs font-bold transition-colors ${
                 isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-200 text-slate-600 hover:text-slate-900'
               }`}
-              title="Tozalash"
+              title={t('filter_clear', 'Tozalash')}
             >
               ✕
             </button>
           )}
 
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className={`p-2 rounded-2xl border text-xs font-bold transition-colors cursor-pointer ${
               isDark ? 'border-slate-700 bg-slate-800 text-slate-400 hover:text-white' : 'border-slate-200 bg-white text-slate-600 hover:text-slate-900'
             }`}
@@ -141,7 +147,7 @@ const SearchModal = ({
 
         {/* Categories Bar */}
         <div className={`px-4 sm:px-6 py-3 border-b flex items-center gap-2 overflow-x-auto no-scrollbar ${isDark ? 'border-slate-800/60 bg-slate-950/40' : 'border-slate-100 bg-slate-50/30'}`}>
-          <span className="text-xs font-bold text-slate-400 shrink-0">Bo'lim:</span>
+          <span className="text-xs font-bold text-slate-400 shrink-0">{t('footer_categories', "Bo'lim")}:</span>
           {categories.map((cat) => (
             <button
               key={cat}
@@ -154,7 +160,7 @@ const SearchModal = ({
                   : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/80'
               }`}
             >
-              {cat}
+              {tc(cat)}
             </button>
           ))}
         </div>
@@ -179,7 +185,7 @@ const SearchModal = ({
 
           {/* Sort selector */}
           <div className="flex items-center gap-1.5">
-            <span>Tartiblash:</span>
+            <span>{t('filter_sort_default', 'Tartiblash').split(':')[0]}:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -187,10 +193,10 @@ const SearchModal = ({
                 isDark ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'
               }`}
             >
-              <option value="default">Odatiy</option>
-              <option value="price-asc">Narx: Arzondan</option>
-              <option value="price-desc">Narx: Qimmatdan</option>
-              <option value="rating">Reyting: Yuqori</option>
+              <option value="default">{t('filter_sort_default', 'Odatiy')}</option>
+              <option value="price-asc">{t('filter_sort_price_asc', 'Narx: Arzondan')}</option>
+              <option value="price-desc">{t('filter_sort_price_desc', 'Narx: Qimmatdan')}</option>
+              <option value="rating">{t('filter_sort_rating', 'Reyting: Yuqori')}</option>
             </select>
           </div>
         </div>
@@ -203,10 +209,10 @@ const SearchModal = ({
                 🔍
               </div>
               <h3 className={`text-base font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                Hech qanday aksessuar topilmadi
+                {t('filter_not_found', 'Hech qanday aksessuar topilmadi')}
               </h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto mb-4">
-                "{query}" so'rovi bo'yicha mahsulot topilmadi. Boshqa so'z bilan qidirib ko'ring yoki barcha toifalarni tanlang.
+                {t('filter_not_found_desc', "Qidiruv so'zini o'zgartirib ko'ring yoki filtrlarni tozalang.")}
               </p>
               <button
                 onClick={() => {
@@ -215,91 +221,96 @@ const SearchModal = ({
                 }}
                 className="btn-pink px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
               >
-                Qidiruvni tozalash
+                {t('filter_clear', 'Qidiruvni tozalash')}
               </button>
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between text-xs text-slate-400 px-1 mb-1">
-                <span>Topilgan aksessuarlar soni: <strong className="text-pink-500 font-bold">{filtered.length} ta</strong></span>
-                <span>Ko'rish yoki savatga qo'shish uchun bosing</span>
+                <span>{t('catalog_title')}: <strong className="text-pink-500 font-bold">{filtered.length} {t('filter_found_products', 'ta')}</strong></span>
+                <span>{t('product_details', "Ko'rish")}</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {filtered.map((product) => (
-                  <div
-                    key={product.id}
-                    className={`p-3 rounded-2xl border flex items-center gap-3.5 transition-all group hover:border-pink-400/60 ${
-                      isDark
-                        ? 'bg-slate-900/70 border-slate-800/90 hover:bg-slate-800/80 shadow-md shadow-black/20'
-                        : 'bg-slate-50/70 border-slate-200/80 hover:bg-white hover:shadow-md'
-                    }`}
-                  >
-                    {/* Thumbnail */}
+                {filtered.map((rawProduct) => {
+                  const product = tp(rawProduct)
+                  return (
                     <div
-                      className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-black/10 cursor-pointer"
-                      onClick={() => {
-                        onOpenProduct && onOpenProduct(product)
-                        onClose()
-                      }}
+                      key={product.id}
+                      className={`p-3 rounded-2xl border flex items-center gap-3.5 transition-all group hover:border-pink-400/60 ${
+                        isDark
+                          ? 'bg-slate-900/70 border-slate-800/90 hover:bg-slate-800/80 shadow-md shadow-black/20'
+                          : 'bg-slate-50/70 border-slate-200/80 hover:bg-white hover:shadow-md'
+                      }`}
                     >
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-300"
-                        onError={(e) => {
-                          e.target.onerror = null
-                          e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
-                        }}
-                      />
-                      {product.badge && (
-                        <span className="absolute top-1 left-1 bg-pink-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">
-                          {product.badge}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <span className="text-[10px] font-bold text-pink-600 bg-pink-500/10 px-1.5 py-0.5 rounded-md">
-                          {product.category}
-                        </span>
-                        <span className="text-[10px] text-amber-500 font-bold flex items-center gap-0.5">
-                          ★ {product.rating}
-                        </span>
-                      </div>
-
-                      <h4
+                      {/* Thumbnail */}
+                      <div
+                        className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-black/10 cursor-pointer"
                         onClick={() => {
-                          onOpenProduct && onOpenProduct(product)
-                          onClose()
+                          if (onOpenProduct) onOpenProduct(product)
+                          handleClose()
                         }}
-                        className={`text-xs font-bold truncate cursor-pointer hover:text-pink-500 transition-colors mb-1 ${
-                          isDark ? 'text-white' : 'text-slate-900'
-                        }`}
-                        title={product.name}
                       >
-                        {product.name}
-                      </h4>
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.onerror = null
+                            e.target.src = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'
+                          }}
+                        />
+                        {product.badge && (
+                          <span className="absolute top-1 left-1 bg-pink-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">
+                            {product.badge}
+                          </span>
+                        )}
+                      </div>
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-extrabold text-pink-600">
-                          {product.priceNum ? product.priceNum.toLocaleString('uz-UZ') : product.price} so'm
-                        </span>
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="text-[10px] font-bold text-pink-600 bg-pink-500/10 px-1.5 py-0.5 rounded-md">
+                            {tc(product.category)}
+                          </span>
+                          <span className="text-[10px] text-amber-500 font-bold flex items-center gap-0.5">
+                            ★ {product.rating}
+                          </span>
+                        </div>
 
-                        <button
-                          onClick={() => onAddToCart && onAddToCart(product)}
-                          className="btn-pink px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 cursor-pointer active:scale-95"
-                          title="Savatga qo'shish"
+                        <h4
+                          onClick={() => {
+                            if (onOpenProduct) onOpenProduct(product)
+                            handleClose()
+                          }}
+                          className={`text-xs font-bold truncate cursor-pointer hover:text-pink-500 transition-colors mb-1 ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}
+                          title={product.name}
                         >
-                          <span>+</span>
-                          <span>Savat</span>
-                        </button>
+                          {product.name}
+                        </h4>
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-extrabold text-pink-600">
+                            {formatPrice(product.priceNum || 0)}
+                          </span>
+
+                          <button
+                            onClick={() => {
+                              if (onAddToCart) onAddToCart(product)
+                            }}
+                            className="btn-pink px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 cursor-pointer active:scale-95"
+                            title={t('product_add_to_cart', "Savatga qo'shish")}
+                          >
+                            <span>+</span>
+                            <span>{t('nav_cart', 'Savat')}</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </>
           )}
@@ -308,13 +319,13 @@ const SearchModal = ({
         {/* Footer info */}
         <div className={`px-6 py-3 border-t flex items-center justify-between text-xs ${isDark ? 'border-slate-800/60 bg-slate-950/40 text-slate-400' : 'border-slate-100 bg-slate-50/50 text-slate-500'}`}>
           <div className="flex items-center gap-2">
-            <span>💡 Maslahat: Mahsulot ustiga bosib batafsil ma'lumot olishingiz mumkin</span>
+            <span>💡 {t('product_details')}: ESC</span>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-pink-600 hover:text-pink-700 font-bold cursor-pointer"
           >
-            Yopish
+            {t('cart_remove', 'Yopish')}
           </button>
         </div>
       </div>

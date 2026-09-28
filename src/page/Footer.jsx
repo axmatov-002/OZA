@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import logoImg from '../assets/image.png'
+import { useLanguage } from '../context/LanguageContext'
 
 /* ─── Floating particle component ─── */
 const Particle = ({ style }) => (
@@ -24,17 +25,38 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
   },
 }))
 
-/* ─── Scrolling marquee brands ─── */
-const BRANDS = [
-  '⌨️ Mexanik Klaviaturalar',
-  '🖱️ Gaming Sichqonchalar',
-  '🎧 Surround Headsetlar',
-  '🖥️ Monitor Qavslar',
-  '🎙️ Strim Mikrofonlari',
-  '💡 Monitor Chiroqlari',
-  '🎮 RGB Gilamchalar',
-  '📷 4K Veb-Kameralar',
-]
+const BRANDS_DATA = {
+  uz: [
+    '⌨️ Mexanik Klaviaturalar',
+    '🖱️ Gaming Sichqonchalar',
+    '🎧 Surround Headsetlar',
+    '🖥️ Monitor Qavslar',
+    '🎙️ Strim Mikrofonlari',
+    '💡 Monitor Chiroqlari',
+    '🎮 RGB Gilamchalar',
+    '📷 4K Veb-Kameralar',
+  ],
+  ru: [
+    '⌨️ Механические Клавиатуры',
+    '🖱️ Гейминг Мыши',
+    '🎧 Surround Гарнитуры',
+    '🖥️ Кронштейны Мониторов',
+    '🎙️ Стрим Микрофоны',
+    '💡 Лампы для Мониторов',
+    '🎮 RGB Коврики',
+    '📷 4K Веб-камеры',
+  ],
+  en: [
+    '⌨️ Mechanical Keyboards',
+    '🖱️ Gaming Mice',
+    '🎧 Surround Headsets',
+    '🖥️ Monitor Mounts',
+    '🎙️ Stream Microphones',
+    '💡 Monitor Lightbars',
+    '🎮 RGB Mousepads',
+    '📷 4K Webcams',
+  ]
+}
 
 /* ─── Animated counter ─── */
 const Counter = ({ end, suffix = '', label }) => {
@@ -73,11 +95,13 @@ const Counter = ({ end, suffix = '', label }) => {
 }
 
 /* ─── Main Footer ─── */
-const Footer = ({ theme = 'light' }) => {
-  const isDark = theme === 'dark'
+const Footer = ({ theme: _theme = 'light' }) => {
+  const { lang, t } = useLanguage()
   const currentYear = new Date().getFullYear()
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+
+  const brands = BRANDS_DATA[lang] || BRANDS_DATA.uz
 
   const handleSubscribe = (e) => {
     e.preventDefault()
@@ -94,7 +118,7 @@ const Footer = ({ theme = 'light' }) => {
       ══════════════════════════════════════════ */}
       <div className="bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 py-3 overflow-hidden">
         <div className="footer-marquee flex gap-10 whitespace-nowrap">
-          {[...BRANDS, ...BRANDS].map((b, i) => (
+          {[...brands, ...brands].map((b, i) => (
             <span key={i} className="text-white/90 text-xs font-bold tracking-wide flex-shrink-0">
               {b} <span className="text-pink-200 mx-2">✦</span>
             </span>
@@ -122,10 +146,26 @@ const Footer = ({ theme = 'light' }) => {
         <div className="relative border-b border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <Counter end={50000} suffix="+" label="Mamnun Mijoz" />
-              <Counter end={20} suffix="+" label="Mahsulot Toifa" />
-              <Counter end={2} suffix=" YIL" label="To'liq Kafolat" />
-              <Counter end={99} suffix="%" label="Ijobiy Sharh" />
+              <Counter
+                end={50000}
+                suffix="+"
+                label={lang === 'ru' ? 'Довольных Клиентов' : lang === 'en' ? 'Happy Customers' : 'Mamnun Mijoz'}
+              />
+              <Counter
+                end={20}
+                suffix="+"
+                label={lang === 'ru' ? 'Категорий Товаров' : lang === 'en' ? 'Product Categories' : 'Mahsulot Toifa'}
+              />
+              <Counter
+                end={2}
+                suffix={lang === 'ru' ? ' ГОДА' : lang === 'en' ? ' YEARS' : ' YIL'}
+                label={lang === 'ru' ? 'Полная Гарантия' : lang === 'en' ? 'Full Warranty' : "To'liq Kafolat"}
+              />
+              <Counter
+                end={99}
+                suffix="%"
+                label={lang === 'ru' ? 'Положительных Отзывов' : lang === 'en' ? 'Positive Reviews' : 'Ijobiy Sharh'}
+              />
             </div>
           </div>
         </div>
@@ -146,14 +186,13 @@ const Footer = ({ theme = 'light' }) => {
                 </div>
               </a>
               <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
-                O'zbekistondagi eng zamonaviy kompyuter aksessuarlari va geyming jihozlari do'koni.
-                Ish va o'yin uchun eng sara uskunalar.
+                {t('footer_desc', "O'zbekistondagi eng zamonaviy kompyuter aksessuarlari va geyming jihozlari do'koni. Ish va o'yin uchun eng sara uskunalar.")}
               </p>
 
               <div className="space-y-2 text-sm text-slate-400">
                 <p className="flex items-center gap-2 hover:text-pink-400 transition-colors cursor-default">
                   <span className="text-pink-500">📍</span>
-                  <span>Toshkent sh., Chilonzor tumani, 9-mavze, 14-uy</span>
+                  <span>{t('footer_address', "Toshkent sh., Yunusobod tumani, Amir Temur shox ko'chasi, 129-uy")}</span>
                 </p>
                 <p className="flex items-center gap-2 hover:text-pink-400 transition-colors cursor-default">
                   <span className="text-pink-500">📞</span>
@@ -161,26 +200,26 @@ const Footer = ({ theme = 'light' }) => {
                 </p>
                 <p className="flex items-center gap-2 hover:text-pink-400 transition-colors cursor-default">
                   <span className="text-pink-500">⏰</span>
-                  <span>Har kuni 09:00 — 21:00</span>
+                  <span>{t('footer_work_hours', 'Har kuni 09:00 — 21:00')}</span>
                 </p>
               </div>
 
               {/* Newsletter */}
               <div className="pt-2">
                 <div className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">
-                  🔔 Aksiya & Chegirmalar:
+                  {lang === 'ru' ? '🔔 Акции и Скидки:' : lang === 'en' ? '🔔 Deals & Offers:' : '🔔 Aksiya & Chegirmalar:'}
                 </div>
                 {subscribed ? (
                   <div className="text-xs font-bold text-emerald-400 bg-emerald-400/10 py-2.5 px-4 rounded-xl border border-emerald-400/20 inline-flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    Rahmat! Siz obuna bo'ldingiz.
+                    {lang === 'ru' ? 'Спасибо! Вы успешно подписались.' : lang === 'en' ? 'Thank you! You are subscribed.' : "Rahmat! Siz obuna bo'ldingiz."}
                   </div>
                 ) : (
                   <form onSubmit={handleSubscribe} className="flex gap-2 max-w-sm">
                     <input
                       type="email"
                       required
-                      placeholder="Email manzilingiz..."
+                      placeholder={lang === 'ru' ? 'Ваш email...' : lang === 'en' ? 'Your email address...' : 'Email manzilingiz...'}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="flex-1 px-4 py-2.5 text-xs rounded-xl border border-white/10 focus:outline-none focus:border-pink-500 bg-white/5 text-white placeholder-slate-500 transition-colors"
@@ -189,7 +228,7 @@ const Footer = ({ theme = 'light' }) => {
                       type="submit"
                       className="btn-pink px-4 py-2.5 rounded-xl text-xs font-bold shrink-0"
                     >
-                      Obuna
+                      {lang === 'ru' ? 'Подписка' : lang === 'en' ? 'Subscribe' : 'Obuna'}
                     </button>
                   </form>
                 )}
@@ -200,17 +239,31 @@ const Footer = ({ theme = 'light' }) => {
             <div className="space-y-4">
               <h4 className="text-xs font-extrabold text-white tracking-widest uppercase flex items-center gap-2">
                 <span className="w-5 h-0.5 bg-pink-500 rounded-full" />
-                Katalog
+                {t('nav_catalog', 'Katalog')}
               </h4>
               <ul className="space-y-2.5 text-sm">
-                {[
+                {(lang === 'ru' ? [
+                  'Механические Клавиатуры',
+                  'Геймерские Мыши',
+                  '7.1 Surround Гарнитуры',
+                  'RGB Большие Коврики',
+                  'Стрим Микрофоны',
+                  'Кронштейны для Мониторов',
+                ] : lang === 'en' ? [
+                  'Mechanical Keyboards',
+                  'Gaming Mice',
+                  '7.1 Surround Headsets',
+                  'RGB Large Mousepads',
+                  'Stream Microphones',
+                  'Monitor Arms & Mounts',
+                ] : [
                   'Mexanik Klaviaturalar',
                   'Geymer Sichqonchalari',
                   '7.1 Surround Headsetlar',
                   'RGB Katta Gilamchalar',
                   'Strim Mikrofonlari',
                   'Monitor Arm & Qavslar',
-                ].map((item) => (
+                ]).map((item) => (
                   <li key={item}>
                     <a
                       href="#catalog"
@@ -228,16 +281,28 @@ const Footer = ({ theme = 'light' }) => {
             <div className="space-y-4">
               <h4 className="text-xs font-extrabold text-white tracking-widest uppercase flex items-center gap-2">
                 <span className="w-5 h-0.5 bg-pink-500 rounded-full" />
-                Xaridorlarga
+                {lang === 'ru' ? 'Покупателям' : lang === 'en' ? 'For Customers' : 'Xaridorlarga'}
               </h4>
               <ul className="space-y-2.5 text-sm">
-                {[
+                {(lang === 'ru' ? [
+                  'Условия доставки',
+                  'Гарантия и сервис',
+                  'Рассрочка (Uzum Nasiya)',
+                  'Отзывы покупателей',
+                  'Частые вопросы (FAQ)',
+                ] : lang === 'en' ? [
+                  'Delivery Terms',
+                  'Warranty & Service',
+                  'Installment plans',
+                  'Customer Reviews',
+                  'Frequently Asked Questions',
+                ] : [
                   'Yetkazib berish shartlari',
                   'Kafolat va servis markazi',
                   "Bo'lib to'lash (Uzum Nasiya)",
                   'Mijozlar sharhlari',
                   'Tez-tez beriladigan savollar',
-                ].map((item) => (
+                ]).map((item) => (
                   <li key={item}>
                     <a
                       href="#benefits"
@@ -256,7 +321,7 @@ const Footer = ({ theme = 'light' }) => {
               <div className="space-y-3">
                 <h4 className="text-xs font-extrabold text-white tracking-widest uppercase flex items-center gap-2">
                   <span className="w-5 h-0.5 bg-pink-500 rounded-full" />
-                  Ijtimoiy Tarmoqlar
+                  {lang === 'ru' ? 'Социальные Сети' : lang === 'en' ? 'Social Media' : 'Ijtimoiy Tarmoqlar'}
                 </h4>
                 <div className="flex items-center gap-2.5">
                   {[
@@ -281,10 +346,10 @@ const Footer = ({ theme = 'light' }) => {
               <div className="space-y-3">
                 <h4 className="text-xs font-extrabold text-white tracking-widest uppercase flex items-center gap-2">
                   <span className="w-5 h-0.5 bg-pink-500 rounded-full" />
-                  To'lov Usullari
+                  {lang === 'ru' ? 'Способы Оплаты' : lang === 'en' ? 'Payment Methods' : "To'lov Usullari"}
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {['Payme', 'Click', 'Uzum', 'Visa', 'Naqd'].map((p) => (
+                  {['Payme', 'Click', 'Uzum', 'Visa', lang === 'ru' ? 'Наличные' : lang === 'en' ? 'Cash' : 'Naqd'].map((p) => (
                     <span
                       key={p}
                       className="footer-payment-badge text-xs font-bold text-slate-300 border border-white/10 bg-white/5 px-3 py-1.5 rounded-lg hover:border-pink-500/50 hover:text-pink-400 hover:bg-pink-500/5 transition-all duration-200 cursor-default"
@@ -301,7 +366,9 @@ const Footer = ({ theme = 'light' }) => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                 </span>
-                <span className="text-xs text-emerald-400 font-semibold">Do'kon ochiq — 09:00 / 21:00</span>
+                <span className="text-xs text-emerald-400 font-semibold">
+                  {lang === 'ru' ? 'Магазин открыт — 09:00 / 21:00' : lang === 'en' ? 'Store open — 09:00 / 21:00' : "Do'kon ochiq — 09:00 / 21:00"}
+                </span>
               </div>
             </div>
           </div>
@@ -310,12 +377,16 @@ const Footer = ({ theme = 'light' }) => {
           <div className="pt-10 mt-10 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-pink-600 animate-pulse" />
-              © {currentYear} UPGRADE Aksessuarlar. Barcha huquqlar himoyalangan.
+              © {currentYear} UPGRADE Aksessuarlar. {t('footer_rights', 'Barcha huquqlar himoyalangan.')}
             </div>
             <div className="flex items-center gap-4">
-              <span className="hover:text-pink-400 transition-colors cursor-pointer">Maxfiylik siyosati</span>
+              <span className="hover:text-pink-400 transition-colors cursor-pointer">
+                {lang === 'ru' ? 'Политика конфиденциальности' : lang === 'en' ? 'Privacy Policy' : 'Maxfiylik siyosati'}
+              </span>
               <span className="text-white/10">•</span>
-              <span className="hover:text-pink-400 transition-colors cursor-pointer">Foydalanish qoidalari</span>
+              <span className="hover:text-pink-400 transition-colors cursor-pointer">
+                {lang === 'ru' ? 'Условия использования' : lang === 'en' ? 'Terms of Service' : 'Foydalanish qoidalari'}
+              </span>
               <span className="text-white/10">•</span>
               <span className="footer-love text-pink-500 font-bold">Made with ❤️ for gamers</span>
             </div>

@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import TiltCard3D from '../components/TiltCard3D'
+import { useLanguage } from '../context/LanguageContext'
 
 const SLIDER_VISIBLE = 4 // Nechta karta bir vaqtda ko'rinadi (desktop)
 
@@ -6,20 +8,23 @@ const ProductSlider = ({
   products = [],
   onAddToCart,
   onOpenProduct,
-  title = 'Ommabop Mahsulotlar',
+  title,
   icon = '🔥',
   theme = 'light'
 }) => {
+  const { t, tc, tp } = useLanguage()
+  const displayTitle = title || t('slider_popular_title', 'Ommabop Mahsulotlar')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState(0)
   const [dragOffset, setDragOffset] = useState(0)
   const [visibleCount, setVisibleCount] = useState(SLIDER_VISIBLE)
+  const [trackWidth, setTrackWidth] = useState(1000)
   const [addedId, setAddedId] = useState(null)
   const trackRef = useRef(null)
   const autoRef = useRef(null)
 
-  // Responsive visible cards
+  // Responsive visible cards & track measurement
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth
@@ -27,6 +32,10 @@ const ProductSlider = ({
       else if (w < 1024) setVisibleCount(2)
       else if (w < 1280) setVisibleCount(3)
       else setVisibleCount(4)
+
+      if (trackRef.current) {
+        setTrackWidth(trackRef.current.offsetWidth || 1000)
+      }
     }
     update()
     window.addEventListener('resize', update)
@@ -93,7 +102,8 @@ const ProductSlider = ({
   if (!products.length) return null
 
   const cardWidthPct = 100 / visibleCount
-  const translateX = -(currentIndex * cardWidthPct) + (dragOffset / (trackRef.current?.offsetWidth || 1)) * 100
+  const dragPercent = trackWidth > 0 ? (dragOffset / trackWidth) * 100 : 0
+  const translateX = -(currentIndex * cardWidthPct) + dragPercent
 
   return (
     <section className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -101,10 +111,10 @@ const ProductSlider = ({
       <div className="flex items-end justify-between mb-8">
         <div>
           <div className="text-xs font-bold uppercase tracking-widest text-pink-600 mb-1.5">
-            {icon} Tavsiya Etiladi
+            {icon} {t('slider_popular_title', 'Tavsiya Etiladi')}
           </div>
           <h2 className={`text-2xl sm:text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-            {title}
+            {displayTitle}
           </h2>
         </div>
 
@@ -118,7 +128,7 @@ const ProductSlider = ({
                 ? 'border-slate-700 bg-slate-800 text-slate-200 hover:border-pink-500 hover:text-pink-400'
                 : 'border-slate-200 bg-white text-slate-600 hover:border-pink-400 hover:text-pink-600'
             }`}
-            aria-label="Oldinga"
+            aria-label={t('slider_prev', 'Oldinga')}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -128,7 +138,7 @@ const ProductSlider = ({
             onClick={() => { goNext(); resetAuto() }}
             disabled={currentIndex >= maxIndex}
             className="w-10 h-10 rounded-full bg-pink-600 shadow-md shadow-pink-500/25 flex items-center justify-center text-white hover:bg-pink-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:shadow-lg active:scale-95 cursor-pointer"
-            aria-label="Keyingisi"
+            aria-label={t('slider_next', 'Keyingisi')}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -157,20 +167,25 @@ const ProductSlider = ({
             willChange: 'transform',
           }}
         >
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="flex-shrink-0 px-2.5"
-              style={{ width: `${cardWidthPct}%` }}
-            >
+          {products.map((rawProduct) => {
+            const product = tp(rawProduct)
+            return (
               <div
-                className={`rounded-3xl border overflow-hidden flex flex-col h-full group cursor-pointer transition-all duration-300 cyber-card ${
-                  theme === 'dark'
-                    ? 'bg-[#111827]/90 border-slate-800 hover:border-pink-500/60 shadow-lg shadow-black/30'
-                    : 'bg-white border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-xl hover:shadow-pink-500/10'
-                }`}
-                onClick={() => onOpenProduct && onOpenProduct(product)}
+                key={product.id}
+                className="flex-shrink-0 px-2.5"
+                style={{ width: `${cardWidthPct}%` }}
               >
+                <TiltCard3D
+                  maxTilt={10}
+                  scale={1.02}
+                  glare={true}
+                  className={`rounded-3xl border overflow-hidden flex flex-col h-full group cursor-pointer transition-all duration-300 cyber-card ${
+                    theme === 'dark'
+                      ? 'bg-[#111827]/90 border-slate-800 hover:border-pink-500/60 shadow-lg shadow-black/30'
+                      : 'bg-white border-slate-200/80 hover:border-pink-300 shadow-sm hover:shadow-xl hover:shadow-pink-500/10'
+                  }`}
+                  onClick={() => onOpenProduct && onOpenProduct(product)}
+                >
                 {/* Image */}
                 <div className={`relative aspect-[4/3] overflow-hidden ${theme === 'dark' ? 'bg-slate-900/80' : 'bg-slate-50'}`}>
                   <img
@@ -191,12 +206,6 @@ const ProductSlider = ({
                       {product.badge}
                     </span>
                   )}
-                  {/* Stock */}
-                  <span className={`absolute bottom-3 left-3 backdrop-blur-md text-[10px] font-extrabold px-2.5 py-0.5 rounded-xl shadow-xs border ${
-                    theme === 'dark' ? 'bg-slate-900/90 text-slate-200 border-white/10' : 'bg-white/90 text-slate-700 border-slate-200'
-                  }`}>
-                    Omborda: {product.stock || 10} dona
-                  </span>
                 </div>
 
                 {/* Body */}
@@ -206,7 +215,7 @@ const ProductSlider = ({
                       <span className={`font-bold px-2 py-0.5 rounded-lg text-[11px] ${
                         theme === 'dark' ? 'bg-pink-950/70 text-pink-400 border border-pink-800/40' : 'bg-pink-50 text-pink-600 border border-pink-100'
                       }`}>
-                        {product.category}
+                        {tc(product.category)}
                       </span>
                       <div className="flex items-center gap-1 text-amber-400 font-black">
                         <span>★</span>
@@ -220,44 +229,61 @@ const ProductSlider = ({
                     </h3>
                   </div>
 
-                  <div className={`flex items-center justify-between mt-auto pt-3 border-t ${
+                  <div className={`mt-auto pt-3 border-t ${
                     theme === 'dark' ? 'border-slate-800' : 'border-slate-100'
                   }`}>
-                    <div>
+                    {/* Price & Discount info row */}
+                    <div className="flex items-baseline justify-between gap-1 mb-2.5">
+                      <div className="flex items-baseline gap-1.5 flex-wrap">
+                        <span className="font-black text-pink-600 dark:text-pink-400 text-base sm:text-lg leading-tight tracking-tight whitespace-nowrap">
+                          {product.price}
+                        </span>
+                        {product.oldPrice && (
+                          <span className="text-[11px] text-slate-400 line-through font-semibold whitespace-nowrap">
+                            {product.oldPrice}
+                          </span>
+                        )}
+                      </div>
                       {product.oldPrice && (
-                        <div className="text-[11px] text-slate-400 line-through font-semibold">{product.oldPrice}</div>
+                        <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 dark:bg-rose-500/20 px-1.5 py-0.5 rounded border border-rose-500/20 whitespace-nowrap shrink-0">
+                          {product.priceNum && product.oldPriceNum && product.oldPriceNum > product.priceNum
+                            ? `-${Math.round(((product.oldPriceNum - product.priceNum) / product.oldPriceNum) * 100)}%`
+                            : 'Chegirma'}
+                        </span>
                       )}
-                      <div className="font-black text-pink-600 dark:text-pink-400 text-base leading-tight tracking-tight">{product.price}</div>
                     </div>
+
+                    {/* Action Button - Full width, clean single line */}
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer active:scale-95 ${
+                      className={`w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition-all cursor-pointer active:scale-95 shadow-sm ${
                         addedId === product.id
-                          ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30'
-                          : 'btn-pink btn-vauu-shine shadow-md shadow-pink-500/20'
+                          ? 'bg-emerald-500 text-white shadow-emerald-500/30'
+                          : 'btn-pink btn-vauu-shine shadow-pink-500/20'
                       }`}
                     >
                       {addedId === product.id ? (
                         <>
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                           </svg>
-                          <span>Qo'shildi</span>
+                          <span className="whitespace-nowrap">{t('product_added', "Qo'shildi")}</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                          <span>Savatga</span>
+                          <span className="whitespace-nowrap">{t('product_add_to_cart', "Savatga qo'shish")}</span>
                         </>
                       )}
                     </button>
                   </div>
                 </div>
-              </div>
+              </TiltCard3D>
             </div>
-          ))}
+          )
+        })}
         </div>
       </div>
 
