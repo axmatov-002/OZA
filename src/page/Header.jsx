@@ -52,24 +52,23 @@ const Header = ({
   }, [onOpenSearch])
 
   const navLinks = [
-    { name: t('nav_catalog', 'Katalog'),     href: '#catalog',        icon: '🗂️' },
-    { name: t('nav_featured', 'Ommabop'),     href: '#featured',       icon: '🔥' },
-    { name: t('nav_setup_builder', 'Setup'), href: '#setup-builder',  icon: '⚡' },
-    { name: t('nav_reviews', 'Sharhlar'),    href: '#reviews',        icon: '⭐' },
-    { name: t('nav_contact', 'Aloqa'),       href: '#contact',        icon: '📞' },
+    { name: t('nav_catalog', 'Katalog'), href: '#catalog', icon: '🗂️' },
+    { name: t('nav_featured', 'Ommabop'), href: '#featured', icon: '🔥' },
+    { name: t('nav_setup_builder', 'Setup'), href: '#setup-builder', icon: '⚡' },
+    { name: t('nav_reviews', 'Sharhlar'), href: '#reviews', icon: '⭐' },
+    { name: t('nav_contact', 'Aloqa'), href: '#contact', icon: '📞' },
   ]
 
   return (
     <header
-      className={`sticky top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled
+      className={`sticky top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled
           ? isDark
             ? 'bg-[#090d16]/95 backdrop-blur-xl shadow-xl shadow-black/40 border-b border-slate-800/80'
             : 'bg-white/95 backdrop-blur-xl shadow-lg shadow-slate-200/60 border-b border-slate-200/70'
           : isDark
-          ? 'bg-[#090d16]/98 backdrop-blur-md border-b border-slate-800/80'
-          : 'bg-white/98 backdrop-blur-md border-b border-slate-100'
-      }`}
+            ? 'bg-[#090d16]/98 backdrop-blur-md border-b border-slate-800/80'
+            : 'bg-white/98 backdrop-blur-md border-b border-slate-100'
+        }`}
     >
       {/* ── Thin animated gradient line at very top ── */}
       <div className="h-[2.5px] w-full bg-gradient-to-r from-pink-500 via-violet-500 via-sky-400 to-pink-500 background-size-200 header-gradient-line" />
@@ -80,15 +79,13 @@ const Header = ({
 
           {/* Logo */}
           <a href="#" className="flex items-center gap-2 group shrink-0">
-            <div className={`relative transition-all duration-300 ${
-              isDark ? 'bg-white/95 px-2 py-1 rounded-xl shadow-xs' : ''
-            }`}>
+            <div className={`relative transition-all duration-300 ${isDark ? 'bg-white/95 px-2 py-1 rounded-xl shadow-xs' : ''
+              }`}>
               <img
                 src={logoImg}
                 alt="UPGRADE Aksessuarlar"
-                className={`w-auto object-contain transition-all duration-300 group-hover:scale-105 ${
-                  scrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-9'
-                }`}
+                className={`w-auto object-contain transition-all duration-300 group-hover:scale-105 ${scrolled ? 'h-7 sm:h-8' : 'h-8 sm:h-9'
+                  }`}
               />
             </div>
           </a>
@@ -99,31 +96,27 @@ const Header = ({
               <a
                 key={link.name}
                 href={link.href}
-                className={`relative px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 group ${
-                  isDark
+                className={`relative px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 group ${isDark
                     ? 'text-slate-300 hover:text-pink-400 hover:bg-slate-800/60'
                     : 'text-slate-600 hover:text-pink-600 hover:bg-pink-50/80'
-                }`}
+                  }`}
               >
                 {link.name}
                 <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-pink-500 rounded-full group-hover:w-4/5 transition-all duration-300" />
               </a>
             ))}
 
-            {currentUser && (
-              <button
-                onClick={onOpenOrders}
-                className={`relative px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-1 group cursor-pointer ${
-                  isDark
-                    ? 'text-slate-300 hover:text-pink-400 hover:bg-slate-800/60'
-                    : 'text-slate-600 hover:text-pink-600 hover:bg-pink-50/80'
+            <button
+              onClick={onOpenOrders}
+              className={`relative px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-1 group cursor-pointer ${isDark
+                  ? 'text-slate-300 hover:text-pink-400 hover:bg-slate-800/60'
+                  : 'text-slate-600 hover:text-pink-600 hover:bg-pink-50/80'
                 }`}
-              >
-                <span>📦</span>
-                <span>{t('nav_my_orders', 'Buyurtmalar')}</span>
-                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-pink-500 rounded-full group-hover:w-4/5 transition-all duration-300" />
-              </button>
-            )}
+            >
+              <span>📦</span>
+              <span>{t('nav_my_orders', 'Buyurtmalar')}</span>
+              <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-pink-500 rounded-full group-hover:w-4/5 transition-all duration-300" />
+            </button>
           </nav>
 
           {/* Right Action Area */}
@@ -132,11 +125,10 @@ const Header = ({
             {/* Quick Search Button (Compact icon-first) */}
             <button
               onClick={onOpenSearch}
-              className={`p-2 sm:px-2.5 sm:py-1.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                isDark
+              className={`p-2 sm:px-2.5 sm:py-1.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${isDark
                   ? 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border-slate-800 shadow-xs'
                   : 'bg-slate-100/80 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border-slate-200/80 shadow-xs'
-              }`}
+                }`}
               title={`${t('nav_search_placeholder', 'Aksessuarlarni qidirish...')} (${t('nav_search_shortcut', 'Ctrl K')})`}
             >
               <svg className="w-4 h-4 text-pink-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,15 +140,14 @@ const Header = ({
             {/* Sound FX Toggle (Audio Feedback for Mechanical Switches) */}
             <button
               onClick={toggleSound}
-              className={`p-1.5 sm:p-2 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${
-                isDark
+              className={`p-1.5 sm:p-2 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${isDark
                   ? isSoundMuted
                     ? 'bg-slate-900 text-slate-500 border-slate-800'
                     : 'bg-pink-950/40 text-pink-400 border-pink-500/40 shadow-xs'
                   : isSoundMuted
-                  ? 'bg-slate-100 text-slate-400 border-slate-200'
-                  : 'bg-pink-50 text-pink-600 border-pink-200 shadow-xs'
-              }`}
+                    ? 'bg-slate-100 text-slate-400 border-slate-200'
+                    : 'bg-pink-50 text-pink-600 border-pink-200 shadow-xs'
+                }`}
               title={isSoundMuted ? "Ovozni yoqish (Sound FX ON)" : "Ovozni o'chirish (Sound FX MUTE)"}
               aria-label="Sound FX"
             >
@@ -172,11 +163,10 @@ const Header = ({
             {/* Wishlist Favorites Button */}
             <button
               onClick={onOpenWishlist}
-              className={`relative px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 border transition-all active:scale-95 cursor-pointer shrink-0 ${
-                isDark
+              className={`relative px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 border transition-all active:scale-95 cursor-pointer shrink-0 ${isDark
                   ? 'bg-slate-900/80 hover:bg-slate-800 text-rose-400 border-slate-800'
                   : 'bg-slate-100/80 hover:bg-slate-200/80 text-rose-500 border-slate-200/80'
-              }`}
+                }`}
               title={lang === 'ru' ? 'Избранное' : lang === 'en' ? 'Wishlist' : 'Sevimlilar'}
               aria-label="Wishlist"
             >
@@ -191,11 +181,10 @@ const Header = ({
             {/* Cart Button */}
             <button
               onClick={onOpenCart}
-              className={`relative px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border transition-all active:scale-95 cursor-pointer shrink-0 ${
-                isDark
+              className={`relative px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 border transition-all active:scale-95 cursor-pointer shrink-0 ${isDark
                   ? 'bg-pink-950/40 hover:bg-pink-950/70 text-pink-300 border-pink-800/40 hover:shadow-md hover:shadow-pink-950/40'
                   : 'bg-pink-50 hover:bg-pink-100/80 text-pink-600 border-pink-200/80 hover:shadow-md hover:shadow-pink-100'
-              }`}
+                }`}
               aria-label={t('nav_cart', 'Savat')}
             >
               <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-pink-500 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -212,11 +201,10 @@ const Header = ({
             {/* User Profile Chip OR Primary Login Button */}
             {currentUser ? (
               <div
-                className={`flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 sm:pr-2 rounded-2xl border transition-all shrink-0 ${
-                  isDark
+                className={`flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 sm:pr-2 rounded-2xl border transition-all shrink-0 ${isDark
                     ? 'bg-slate-900 border-slate-800 text-white'
                     : 'bg-slate-50 hover:bg-slate-100/90 border-slate-200/80 shadow-xs'
-                }`}
+                  }`}
               >
                 <img
                   src={
@@ -234,8 +222,8 @@ const Header = ({
                     {currentUser.role === 'admin'
                       ? t('role_admin', '👑 Admin')
                       : currentUser.role === 'manager'
-                      ? t('role_manager', '👔 Menejer')
-                      : t('role_user', '🛒 Xaridor')}
+                        ? t('role_manager', '👔 Menejer')
+                        : t('role_user', '🛒 Xaridor')}
                   </span>
                 </div>
 
@@ -281,13 +269,12 @@ const Header = ({
             {/* Mobile / Tablet menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 sm:p-2.5 rounded-xl transition-all duration-200 xl:hidden cursor-pointer shrink-0 ${
-                mobileMenuOpen
+              className={`p-2 sm:p-2.5 rounded-xl transition-all duration-200 xl:hidden cursor-pointer shrink-0 ${mobileMenuOpen
                   ? 'bg-pink-50 text-pink-600 rotate-90'
                   : isDark
-                  ? 'text-slate-300 hover:bg-slate-800'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-              }`}
+                    ? 'text-slate-300 hover:bg-slate-800'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
               style={{ transition: 'transform 0.3s ease, background 0.2s' }}
               aria-label="Menyu"
             >
@@ -307,16 +294,14 @@ const Header = ({
 
       {/* ── Mobile & Tablet Menu Drawer ── */}
       <div
-        className={`xl:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileMenuOpen ? 'max-h-[550px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`xl:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[550px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
       >
         <div
-          className={`border-t px-4 pt-3 pb-5 space-y-2 shadow-xl ${
-            isDark
+          className={`border-t px-4 pt-3 pb-5 space-y-2 shadow-xl ${isDark
               ? 'border-slate-800 bg-[#090d16]/98 text-white'
               : 'border-slate-100 bg-white/98 text-slate-900'
-          }`}
+            }`}
         >
           {/* Language Switcher in Mobile Menu */}
           <LanguageSwitcher theme={theme} isMobile={true} />
@@ -327,11 +312,10 @@ const Header = ({
               setMobileMenuOpen(false)
               if (onOpenSearch) onOpenSearch()
             }}
-            className={`w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left mb-3 cursor-pointer ${
-              isDark
+            className={`w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left mb-3 cursor-pointer ${isDark
                 ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-pink-500/50'
                 : 'bg-slate-100/90 border-slate-200 text-slate-700 hover:border-pink-300'
-            }`}
+              }`}
           >
             <div className="flex items-center gap-2.5">
               <span className="text-base text-pink-500">🔍</span>
@@ -344,9 +328,8 @@ const Header = ({
           {/* User profile inside mobile menu */}
           {currentUser ? (
             <div
-              className={`flex items-center justify-between p-3 rounded-2xl border mb-2 ${
-                isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
-              }`}
+              className={`flex items-center justify-between p-3 rounded-2xl border mb-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}
             >
               <div className="flex items-center gap-2.5">
                 <img
@@ -362,8 +345,8 @@ const Header = ({
                     {currentUser.role === 'admin'
                       ? t('role_admin', '👑 Admin')
                       : currentUser.role === 'manager'
-                      ? t('role_manager', '👔 Menejer')
-                      : t('role_user', '🛒 Xaridor')}
+                        ? t('role_manager', '👔 Menejer')
+                        : t('role_user', '🛒 Xaridor')}
                   </div>
                 </div>
               </div>
@@ -417,9 +400,8 @@ const Header = ({
 
           {/* Mobile Theme Toggle */}
           <div
-            className={`flex items-center justify-between p-3 rounded-2xl border mb-2 ${
-              isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
-            }`}
+            className={`flex items-center justify-between p-3 rounded-2xl border mb-2 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}
           >
             <span className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
               {t('nav_theme_label', 'Fon rejimi:')}
@@ -428,22 +410,20 @@ const Header = ({
               <button
                 type="button"
                 onClick={() => onSetTheme && onSetTheme('light')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  !isDark
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${!isDark
                     ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/30 font-black scale-105'
                     : 'text-slate-400 hover:text-white'
-                }`}
+                  }`}
               >
                 <span>☀️</span> {t('nav_theme_light', 'Oq')}
               </button>
               <button
                 type="button"
                 onClick={() => onSetTheme && onSetTheme('dark')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  isDark
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${isDark
                     ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/40 font-black scale-105'
                     : 'text-slate-500 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 <span>🌙</span> {t('nav_theme_dark', 'Qora')}
               </button>
@@ -455,33 +435,29 @@ const Header = ({
               key={link.name}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors ${
-                isDark
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors ${isDark
                   ? 'text-slate-200 hover:bg-slate-800 hover:text-pink-400'
                   : 'text-slate-700 hover:bg-pink-50 hover:text-pink-600'
-              }`}
+                }`}
             >
               <span className="text-base">{link.icon}</span>
               {link.name}
             </a>
           ))}
 
-          {currentUser && (
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false)
-                onOpenOrders()
-              }}
-              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer ${
-                isDark
-                  ? 'text-slate-200 hover:bg-slate-800 hover:text-pink-400'
-                  : 'text-slate-700 hover:bg-pink-50 hover:text-pink-600'
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false)
+              onOpenOrders()
+            }}
+            className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer ${isDark
+                ? 'text-slate-200 hover:bg-slate-800 hover:text-pink-400'
+                : 'text-slate-700 hover:bg-pink-50 hover:text-pink-600'
               }`}
-            >
-              <span className="text-base">📦</span>
-              {t('nav_my_orders', 'Mening Buyurtmalarim')}
-            </button>
-          )}
+          >
+            <span className="text-base">📦</span>
+            {t('nav_my_orders', 'Mening Buyurtmalarim')}
+          </button>
 
           <div className={`pt-3 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
             <button

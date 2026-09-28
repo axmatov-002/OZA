@@ -1792,7 +1792,7 @@ const Main = ({
               src={logoImg}
               alt="UPGRADE"
               className={`h-12 sm:h-14 w-auto mx-auto mb-4 object-contain ${
-                isDark ? 'bg-white/95 px-4 py-1.5 rounded-2xl shadow-md' : ''
+                isDark ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.25)]' : ''
               }`}
             />
             <h2 className={`text-2xl sm:text-4xl font-black mb-3 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
