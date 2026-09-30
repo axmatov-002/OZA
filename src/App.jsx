@@ -158,7 +158,16 @@ const App = () => {
       const saved = localStorage.getItem('upg_users')
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Sync seed admin email and role in case initialDb was updated
+          return parsed.map((u) => {
+            const seed = (initialDb.users || []).find((su) => su.id === u.id)
+            if (seed && seed.role === 'admin' && seed.email) {
+              return { ...u, email: seed.email, role: 'admin' }
+            }
+            return u
+          })
+        }
       }
     } catch {}
     return initialDb.users || []

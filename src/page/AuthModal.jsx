@@ -460,6 +460,49 @@ const AuthModal = ({
                 </svg>
               </button>
 
+              {/* Demo Accounts Quick-Fill Helper */}
+              <div className="pt-2">
+                <p className="text-[11px] font-semibold text-slate-400 mb-1.5 text-center">
+                  {lang === 'ru' ? 'Быстрый вход для тестов:' : lang === 'en' ? 'Quick demo login:' : 'Tezkor test kirish:'}
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginEmail('admin@gmail.com')
+                      setLoginPassword('admin123')
+                    }}
+                    className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 transition-all cursor-pointer flex items-center gap-1 shadow-2xs hover:scale-102"
+                    title="admin@gmail.com / admin123"
+                  >
+                    <span>👑 Admin</span>
+                    <span className="text-[10px] text-amber-600 font-mono">admin@gmail.com</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginEmail('manager@upgrade.uz')
+                      setLoginPassword('manager123')
+                    }}
+                    className="px-2.5 py-1 rounded-xl text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200/80 transition-all cursor-pointer flex items-center gap-1 shadow-2xs hover:scale-102"
+                    title="manager@upgrade.uz / manager123"
+                  >
+                    <span>👔 Menejer</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLoginEmail('user@upgrade.uz')
+                      setLoginPassword('user123')
+                    }}
+                    className="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-all cursor-pointer flex items-center gap-1 shadow-2xs hover:scale-102"
+                    title="user@upgrade.uz / user123"
+                  >
+                    <span>🛒 Xaridor</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Switch to Register */}
               <div className="text-center pt-3 border-t border-slate-100">
                 <p className="text-xs text-slate-500">
