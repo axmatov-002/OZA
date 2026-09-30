@@ -163,7 +163,7 @@ const App = () => {
           return parsed.map((u) => {
             const seed = (initialDb.users || []).find((su) => su.id === u.id)
             if (seed && seed.role === 'admin' && seed.email) {
-              return { ...u, email: seed.email, role: 'admin' }
+              return { ...u, email: seed.email, role: 'admin', avatar: seed.avatar || u.avatar }
             }
             return u
           })

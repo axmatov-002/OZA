@@ -1684,7 +1684,7 @@ const Main = ({
                   : 'CyberBlade Pro klaviaturasi shunchaki ajoyib! Switchlarning ovozi va sezgirligi kod yozishda boshqacha rohat bag\'ishlaydi. Simsiz ulanishi juda tez va sifatli.',
                 rating: 5,
                 product: 'CyberBlade Pro RGB',
-                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'
+                avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80'
               },
               {
                 name: 'Shahzod Karimov',
@@ -1696,7 +1696,7 @@ const Main = ({
                   : 'Phantom V3 sichqonchasi bilan o\'yindagi natijalarim sezilarli darajada oshdi. Og\'irligi 58 gramm, qo\'lda deyarli sezilmaydi, sensor aniqligi 10/10.',
                 rating: 5,
                 product: 'Phantom V3 Ultralight',
-                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'
+                avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80'
               },
               {
                 name: 'Dildora Alimova',
@@ -1708,7 +1708,7 @@ const Main = ({
                   : 'ApexSound 7.1 naushniklarini kun bo\'yi taqib o\'tiraman, quloqni mutlaqo charchatmaydi. Tovush fazoviy toza va mikrofon sifati juda yuqori darajada.',
                 rating: 5,
                 product: 'ApexSound 7.1 Spatial',
-                avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80'
+                avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80'
               }
             ].map((rev, rIdx) => (
               <div
