@@ -51,9 +51,24 @@ const App = () => {
     }
   })
 
+  // Synchronize currentUser to localStorage
+  useEffect(() => {
+    try {
+      if (currentUser) {
+        localStorage.setItem('upg_current_user', JSON.stringify(currentUser))
+      } else {
+        localStorage.removeItem('upg_current_user')
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }, [currentUser])
+
   // Active Role: 'user' | 'manager' | 'admin'
   const [currentRole, setCurrentRole] = useState(() => {
     try {
+      const savedRole = localStorage.getItem('upg_current_role')
+      if (savedRole) return savedRole
       const saved = localStorage.getItem('upg_current_user')
       return saved ? JSON.parse(saved).role : 'user'
     } catch {
@@ -61,21 +76,83 @@ const App = () => {
     }
   })
 
-  // User sub-view: 'store' | 'orders'
-  const [userView, setUserView] = useState('store')
-
-  // Authentication & User Selection modal (opened on start if no user is logged in!)
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(() => {
+  // Synchronize currentRole to localStorage
+  useEffect(() => {
     try {
-      return !localStorage.getItem('upg_current_user')
+      localStorage.setItem('upg_current_role', currentRole)
+    } catch (e) {
+      console.error(e)
+    }
+  }, [currentRole])
+
+  // User sub-view: 'store' | 'orders'
+  const [userView, setUserView] = useState(() => {
+    try {
+      return localStorage.getItem('upg_user_view') || 'store'
     } catch {
-      return true
+      return 'store'
     }
   })
 
-  // Central Database States initialized from db.json and localStorage
-  const [products, setProducts] = useState(initialDb.products)
-  const [orders, setOrders] = useState(initialDb.orders)
+  // Synchronize userView to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_user_view', userView)
+    } catch (e) {
+      console.error(e)
+    }
+  }, [userView])
+
+  // Authentication modal: opened on start if no user is logged in and not previously dismissed
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(() => {
+    try {
+      if (localStorage.getItem('upg_current_user')) return false
+      if (localStorage.getItem('upg_auth_dismissed') === 'true') return false
+      return true
+    } catch {
+      return false
+    }
+  })
+
+  // Central Database States initialized from localStorage and fallback to db.json
+  const [products, setProducts] = useState(() => {
+    try {
+      const saved = localStorage.getItem('upg_products')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      }
+    } catch {}
+    return initialDb.products || []
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_products', JSON.stringify(products))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [products])
+
+  const [orders, setOrders] = useState(() => {
+    try {
+      const saved = localStorage.getItem('upg_orders')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) return parsed
+      }
+    } catch {}
+    return initialDb.orders || []
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_orders', JSON.stringify(orders))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [orders])
+
   const [users, setUsers] = useState(() => {
     try {
       const saved = localStorage.getItem('upg_users')
@@ -84,9 +161,35 @@ const App = () => {
         if (Array.isArray(parsed) && parsed.length > 0) return parsed
       }
     } catch {}
-    return initialDb.users
+    return initialDb.users || []
   })
-  const [consultations, setConsultations] = useState(initialDb.consultations)
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_users', JSON.stringify(users))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [users])
+
+  const [consultations, setConsultations] = useState(() => {
+    try {
+      const saved = localStorage.getItem('upg_consultations')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) return parsed
+      }
+    } catch {}
+    return initialDb.consultations || []
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_consultations', JSON.stringify(consultations))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [consultations])
 
   // Wishlist Favorites State
   const [wishlist, setWishlist] = useState(() => {
@@ -98,29 +201,51 @@ const App = () => {
     }
   })
 
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_wishlist', JSON.stringify(wishlist))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [wishlist])
+
   const toggleWishlist = (id) => {
     setWishlist((prev) => {
       const exists = prev.includes(id)
-      const next = exists ? prev.filter((item) => item !== id) : [...prev, id]
-      try {
-        localStorage.setItem('upg_wishlist', JSON.stringify(next))
-      } catch {}
-      return next
+      return exists ? prev.filter((item) => item !== id) : [...prev, id]
     })
   }
 
-  // Cart State for User
-  const [cart, setCart] = useState([
-    {
-      id: 'p1',
-      name: 'UPGRADE CyberBlade Pro RGB Wireless Klaviatura',
-      price: "890 000 so'm",
-      priceNum: 890000,
-      image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80',
-      category: 'Klaviaturalar',
-      qty: 1
+  // Cart State for User (Saved in localStorage)
+  const [cart, setCart] = useState(() => {
+    try {
+      const saved = localStorage.getItem('upg_cart')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) return parsed
+      }
+    } catch {}
+    return [
+      {
+        id: 'p1',
+        name: 'UPGRADE CyberBlade Pro RGB Wireless Klaviatura',
+        price: "890 000 so'm",
+        priceNum: 890000,
+        image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80',
+        category: 'Klaviaturalar',
+        qty: 1
+      }
+    ]
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('upg_cart', JSON.stringify(cart))
+    } catch (e) {
+      console.error(e)
     }
-  ])
+  }, [cart])
+
   const [cartOpen, setCartOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
 
@@ -167,6 +292,7 @@ const App = () => {
       orderNumber: `UPG-${Math.floor(10000 + Math.random() * 90000)}`,
       userId: currentUser?.id || `usr-${Date.now()}`,
       customerName: currentUser?.name || 'Mijoz',
+      customerEmail: currentUser?.email || '',
       phone: currentUser?.phone || '',
       address: currentUser?.address || "Toshkent sh.",
       items: cart.map((it) => ({
@@ -256,6 +382,8 @@ const App = () => {
 
     try {
       localStorage.setItem('upg_current_user', JSON.stringify(safeUser))
+      localStorage.setItem('upg_current_role', safeUser.role || 'user')
+      localStorage.removeItem('upg_auth_dismissed')
     } catch (e) {
       console.error(e)
     }
@@ -295,6 +423,9 @@ const App = () => {
 
     try {
       localStorage.removeItem('upg_current_user')
+      localStorage.removeItem('upg_current_role')
+      localStorage.removeItem('upg_user_view')
+      localStorage.removeItem('upg_auth_dismissed')
     } catch (e) {
       console.error(e)
     }
@@ -582,7 +713,12 @@ const App = () => {
           <AuthModal
             isOpen={isAuthModalOpen}
             users={users}
-            onClose={() => setIsAuthModalOpen(false)}
+            onClose={() => {
+              setIsAuthModalOpen(false)
+              try {
+                localStorage.setItem('upg_auth_dismissed', 'true')
+              } catch {}
+            }}
             onLoginSuccess={handleLoginSuccess}
             onRegisterUser={handleRegisterUser}
           />

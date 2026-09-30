@@ -10,7 +10,11 @@ const UserOrders = ({ orders, currentUser, onBackToShop, theme = 'light' }) => {
   // Filter orders specifically belonging to the logged-in user
   const myOrders = currentUser
     ? orders.filter(
-        (o) => o.userId === currentUser.id || o.customerName === currentUser.name
+        (o) =>
+          o.userId === currentUser.id ||
+          o.customerName === currentUser.name ||
+          (currentUser.email && o.customerEmail && o.customerEmail === currentUser.email) ||
+          (currentUser.phone && o.phone && o.phone === currentUser.phone)
       )
     : orders
 
